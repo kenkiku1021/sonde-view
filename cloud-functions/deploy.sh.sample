@@ -1,0 +1,4 @@
+#!/bin/sh
+gcloud functions deploy parse_windsond\
+    --trigger-resource ***TARGET_BUCKET_NAME*** --trigger-event google.storage.object.finalize\
+    --runtime ruby27

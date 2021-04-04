@@ -1,0 +1,192 @@
+@charset "utf-8";
+
+$footer-padding: 0.75rem 1rem 0.75rem 1rem;
+$modal-background-background-color: rgba(0, 0, 0, 0.5);;
+
+@import "~bulma/bulma";
+
+.data-selector {
+    margin: 0.5rem 0 0.5rem 0;
+}
+
+.button.color-01 {
+    border-color: red;
+    color: red;
+}
+
+.button.color-01.is-active {
+    background-color: red;
+    color: white;
+}
+
+.button.color-02 {
+    border-color: orange;
+    color: orange;
+}
+
+.button.color-02.is-active {
+    background-color: orange;
+    color: white;
+}
+
+.button.color-03 {
+    border-color: orchid;
+    color: orchid;
+}
+
+.button.color-03.is-active {
+    background-color: orchid;
+    color: white;
+}
+
+.chart-wrapper {
+    margin: 0.5rem auto 0.5rem auto;
+    text-align: center;
+    position: relative;
+}
+
+@media (min-width: 768px) {
+    .chart-wrapper {
+        text-align: left;
+    }
+}
+
+.chart-wrapper .from-to-button {
+    position: absolute;
+    z-index: 10;
+    right: 10px;
+    top: 10px;
+}
+
+.chart {
+    border: solid 1px #333;
+}
+
+.axis {
+    stroke: #777;
+}
+
+.scale-circle {
+    fill: transparent;
+    stroke: #aaa;
+}
+
+.scale-box {
+    fill: #eee;
+}
+
+.scale-line {
+    stroke: #333;
+    fill:transparent;
+}
+
+.scale-text {
+    font-family: sans-serif;
+    font-size: 10px;
+    text-align: center;
+}
+
+.chart-line {
+    stroke-width: 2px;
+    fill: transparent;
+}
+
+.line-01 {
+    stroke: red;
+}
+
+.line-02 {
+    stroke: orange;
+}
+
+.line-03 {
+    stroke: orchid;
+}
+
+.field.chart-type-buttons {
+    justify-content: center;
+}
+
+.data-table-wrapper {
+    overflow-x: scroll;
+    display: flex;
+}
+
+.data-table {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.data-table-wrapper .data-table:first-child {
+    margin-left: 0;
+}
+
+.data-table caption {
+    text-align: left;
+    padding: 0.25rem 0 0.25rem 0;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+table.data-table td {
+    text-align: right;
+}
+
+.data-table caption.color-01 {
+    background-color: red;
+    color: white;
+    width: 4em;
+}
+
+.data-table caption.color-02 {
+    background-color: orange;
+    color: white;
+    width: 4em;
+}
+
+.data-table caption.color-03 {
+    background-color: orchid;
+    color: white;
+    width: 4em;
+}
+
+.history-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 1rem 1rem 0.5rem 1rem;
+    border-bottom: dotted 1px #777;
+}
+
+.history-list {
+    margin: 0.5rem 1rem 1rem 1rem;
+}
+
+.history-list a {
+    display: block;
+    padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+}
+
+.history-list li {
+    border: solid 1px #aaa;
+    border-bottom-style: none;
+}
+
+.history-list li:first-child {
+    border-top-left-radius: 0.4rem;
+    border-top-right-radius: 0.4rem;
+}
+
+.history-list li:last-child {
+    border-bottom-left-radius: 0.4rem;
+    border-bottom-right-radius: 0.4rem;
+    border-bottom-style: solid;
+}
+
+.settings .label {
+    margin-left: 0.5rem;
+    margin-right: 1rem;
+}
+
+.settings .button {
+    width: 5rem;
+}
