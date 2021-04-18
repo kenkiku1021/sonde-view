@@ -3,7 +3,9 @@ import agh from "agh.sprintf";
 import UI from "./ui";
 import SondeDataList from "./models/sonde_data_list";
 import {DstChart, SpdChart} from "./charts";
-import DataTables from "./data-tables";
+import DataTable from "./data-tables";
+import Setting from "./models/setting";
+import i18next from "i18next";
 
 let dataList;
 const ChartPage = {
@@ -15,15 +17,44 @@ const ChartPage = {
     view: vnode => {
         const selectedData = dataList ? dataList.selectedData() : null;
         return [
-            m(UI.NavBar, {title: selectedData ? selectedData.getDate() : ""}),
-            dataList ? m(ChartDataSelector) : "",
-            dataList ? m(".chart-wrapper", [
-                m(DstChart, {dataList: dataList}),
-                m(SpdChart),
-            ]) : "",
-            dataList ? m(DataTables, {dataList: dataList}) : "",
+            m(UI.NavBar, {
+                title: selectedData ? selectedData.getDate() : "",
+                status: dataList && dataList.autoUpdateEnabled() ? i18next.t("statusUpdating") : i18next.t("statusStopped"),
+            }),
+            m("main", [
+                m(".container", [
+                    dataList ? [
+                        m(ChartDataSelector),
+                        m(".chart-wrapper.is-flex.is-justify-content-center	", [
+                            m(DstChart, {dataList: dataList}),
+                            selectedData ? m(SpdChart, {data: selectedData}) : "",
+                        ]),
+                        m(ChartSelectorView),
+                        m(DataTable, {dataList: dataList})
+                    ] : "",        
+                ]),
+            ]),
         ];
     },
+};
+
+const ChartSelectorView = {
+    view: vnode => {
+        return m(".buttons.has-addons.is-hidden-tablet.is-justify-content-center", [
+            m("button.button", {
+                class: Setting.isDstChartMode() ? "is-success is-selected" : "",
+                onclick: e => {
+                    Setting.setDstChartMode();
+                },
+            }, "DstChart"),
+            m("button.button", {
+                class: Setting.isSpdChartMode() ? "is-success is-selected" : "",
+                onclick: e => {
+                    Setting.setSpdChartMode();
+                },
+            }, "SpdChart"),
+        ]);
+    }
 };
 
 const ChartDataSelector = {
@@ -42,6 +73,9 @@ const ChartDataSelector = {
                         return m(".control", [
                             m("button.button.is-small", {
                                 class: buttonClass,
+                                onclick : e => {
+                                    dataList.selectData(data.getID());
+                                },
                             }, data.getTime()),
                         ]);
                     }),

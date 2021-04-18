@@ -1,13 +1,18 @@
 const Unit = {
+    degToRad:(v) => {
+        return Math.PI * 2 * v / 360;
+    },    
+
     WindspeedUnitEnum: {
         // 風速の単位
+        NONE: 0, // 非表示
         M_PER_SEC: 1, // [m/s]
         KM_PER_HOUR: 2, // [km/h]
         KT: 3, // [kt]
     },
 
     validWindspeedUnit: u => {
-        return u == WindspeedUnitEnum.M_PER_SEC || u == WindspeedUnitEnum.KM_PER_HOUR || u == WindspeedUnitEnum.KT;
+        return u == WindspeedUnitEnum.NONE || u == WindspeedUnitEnum.M_PER_SEC || u == WindspeedUnitEnum.KM_PER_HOUR || u == WindspeedUnitEnum.KT;
     },
 
     conv_m_s_to_kt: v => {
@@ -34,16 +39,21 @@ const Unit = {
 
     AltitudeUnitEnum: {
         // 高度の単位
+        NONE: 0, // 非表示
         M: 1, // [m]
         FT: 2, // [ft]
     },
 
     validAltitudeUnit: u => {
-        return u == AltitudeUnitEnum.M || u == AltitudeUnitEnum.FT;
+        return u == AltitudeUnitEnum.NONE || u ==  AltitudeUnitEnum.M || u == AltitudeUnitEnum.FT;
     },
 
     conv_ft_to_m: v => {
         return v * 0.3048;
+    },
+
+    conv_m_to_ft: v => {
+        return v / 0.3048;
     },
 
     altitudeUnitText: u => {
@@ -57,6 +67,16 @@ const Unit = {
             default:
                 return "";
         }
+    },
+
+    TemperatureUnitEnum: {
+        // 気温の単位
+        NONE: 0, // 非表示
+        CELSIUS: 1, // ℃
+    },
+
+    validTemperatureUnit: u => {
+        return u == TemperatureUnitEnum.NONE || u == TemperatureUnitEnum.CELSIUS;
     },
 };
 

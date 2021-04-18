@@ -5,7 +5,7 @@ const Direction = {
     },
 
     validDirection: d => {
-        return d == DirectionEnum.TO || d == DirectionEnum.FROM;
+        return d == Direction.DirectionEnum.TO || d == Direction.DirectionEnum.FROM;
     },
 
     MagDeclinationEnum: {
@@ -15,7 +15,7 @@ const Direction = {
     },
 
     validMagDeclination: d => {
-        return d == MagDeclinationEnum.TRUE || d == MagDeclinationEnum.MAG;
+        return d == Direction.MagDeclinationEnum.TRUE || d == Direction.MagDeclinationEnum.MAG;
     },
 };
 

@@ -86,21 +86,21 @@ class WindsondDataParser
         line.split(FIELD_SEPARATOR).each do |field|
             case field
             when "Altitude (ft MSL)"
-                @alt_col = col
-                @alt_unit = :unit_ft
-            when "Altitude (m MSL)"
                 if @alt_col.nil?
                     @alt_col = col
-                    @alt_unit = :unit_m
+                    @alt_unit = :unit_ft
                 end
+            when "Altitude (m MSL)"
+                @alt_col = col
+                @alt_unit = :unit_m
             when "Height (ft AGL)"
-                @height_col = col
-                @height_unit = :unit_ft
-            when "Height (m AGL)"
                 if @height_col.nil?
                     @height_col = col
-                    @height_unit = :unit_m
+                    @height_unit = :unit_ft
                 end
+            when "Height (m AGL)"
+                @height_col = col
+                @height_unit = :unit_m
             when "Wind direction (true deg)"
                 if @windheading_col.nil?
                     @winddirection_col = col
@@ -163,8 +163,8 @@ class WindsondDataParser
     end
 
     def conv_height(value, unit)
-        if unit == :unit_m
-            UnitConv::m_to_ft(value)
+        if unit == :unit_ft
+            UnitConv::ft_to_m(value)
         else
             value
         end

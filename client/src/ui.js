@@ -1,5 +1,6 @@
 import m from "mithril";
 import i18next from 'i18next';
+import firebase from "firebase/app";
 
 const UI = {
     NavBarItem: {
@@ -12,6 +13,18 @@ const UI = {
                 },
             }, vnode.children);
         }
+    },
+
+    NavBarSignOutItem: {
+        view: vnode => {
+            return m("a.navbar-item", {
+                onclick: e => {
+                    firebase.auth().signOut().then(() => {
+                        location.reload();
+                    })
+                },
+            }, i18next.t("menuSignout"));
+        },
     },
 
     NavBar: {
@@ -27,6 +40,7 @@ const UI = {
                         class: "navbar-item",
                     }, i18next.t("appName")),
                     m(".navbar-item.data-title", vnode.attrs.title),
+                    vnode.attrs.status ? m(".navbar-item.status", vnode.attrs.status) : "",
                     m("a.navbar-burger[role=button][aria-label=menu][aria-expanded=false]", {
                         class: vnode.state.menuActive ? "is-active" : "",
                         onclick: e => {
@@ -45,12 +59,32 @@ const UI = {
                         m(UI.NavBarItem, {path: "/main"}, i18next.t("menuView")),
                         m(UI.NavBarItem, {path: "/history"}, i18next.t("menuHistory")),
                         m(UI.NavBarItem, {path: "/setup"}, i18next.t("menuSetup")),
+                        m(UI.NavBarSignOutItem),
                     ])
                 ])
             ]);
         },
     },
+
+    SettingCard: {
+        view: vnode => {
+            return m(".card", [
+                m("header.card-header", [
+                    m("p.card-header-title", vnode.attrs.title),
+                ]),
+                m(".card-content", vnode.children),
+            ]);
+        },
+    },
     
+    ToggleButton: {
+        view: vnode => {
+            return m("button.button.toggle-button", {
+                class: vnode.attrs.selected ? "is-selected is-info" : "",
+                onclick: vnode.attrs.onclick,
+            }, vnode.children);
+        }
+    },
 };
 
 export default UI;

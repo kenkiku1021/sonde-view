@@ -3,46 +3,157 @@
 $footer-padding: 0.75rem 1rem 0.75rem 1rem;
 $modal-background-background-color: rgba(0, 0, 0, 0.5);;
 
+$color01: red;
+$color02: orange;
+$color03: limegreen;
+$color04: darkturquoise;
+$color05: teal;
+$color06: gray;
+$color07: darkgray;
+$color08: silver;
+$color09: lightgray;
+$color10: gainsboro;
+
 @import "~bulma/bulma";
+
+.navbar {
+    .data-title {
+        font-weight: bold;
+    }
+
+    .status {
+        font-size: 80%;
+    }
+
+    .status::before {
+        content: "[",
+    }
+
+    .status::after {
+        content: "]",
+    }
+}
+
+.login {
+    margin: 2em auto 0 auto;
+    max-width: 400px;
+    text-align: center;
+
+    h1 {
+        font-size: 120%;
+        font-weight: bold;
+        border-bottom: solid 1px #777;
+        margin: 0.5rem 0 1rem 0;
+    }    
+}
 
 .data-selector {
     margin: 0.5rem 0 0.5rem 0;
 }
 
 .button.color-01 {
-    border-color: red;
-    color: red;
+    border-color: $color01;
+    color: $color01;
 }
 
 .button.color-01.is-active {
-    background-color: red;
+    background-color: $color01;
     color: white;
 }
 
 .button.color-02 {
-    border-color: orange;
-    color: orange;
+    border-color: $color02;
+    color: $color02;
 }
 
 .button.color-02.is-active {
-    background-color: orange;
+    background-color: $color02;
     color: white;
 }
 
 .button.color-03 {
-    border-color: orchid;
-    color: orchid;
+    border-color: $color03;
+    color: $color03;
 }
 
 .button.color-03.is-active {
-    background-color: orchid;
+    background-color: $color03;
+    color: white;
+}
+
+.button.color-04 {
+    border-color: $color04;
+    color: $color04;
+}
+
+.button.color-04.is-active {
+    background-color: $color04;
+    color: white;
+}
+
+.button.color-05 {
+    border-color: $color05;
+    color: $color05;
+}
+
+.button.color-05.is-active {
+    background-color: $color05;
+    color: white;
+}
+
+.button.color-06 {
+    border-color: $color06;
+    color: $color06;
+}
+
+.button.color-06.is-active {
+    background-color: $color06;
+    color: white;
+}
+
+.button.color-07 {
+    border-color: $color07;
+    color: $color07;
+}
+
+.button.color-07.is-active {
+    background-color: $color07;
+    color: white;
+}
+
+.button.color-08 {
+    border-color: $color08;
+    color: $color08;
+}
+
+.button.color-08.is-active {
+    background-color: $color08;
+    color: white;
+}
+
+.button.color-09 {
+    border-color: $color09;
+    color: $color09;
+}
+
+.button.color-09.is-active {
+    background-color: $color09;
+    color: white;
+}
+
+.button.color-10 {
+    border-color: $color10;
+    color: $color10;
+}
+
+.button.color-10.is-active {
+    background-color: $color10;
     color: white;
 }
 
 .chart-wrapper {
     margin: 0.5rem auto 0.5rem auto;
     text-align: center;
-    position: relative;
 }
 
 @media (min-width: 768px) {
@@ -51,11 +162,16 @@ $modal-background-background-color: rgba(0, 0, 0, 0.5);;
     }
 }
 
-.chart-wrapper .from-to-button {
-    position: absolute;
-    z-index: 10;
-    right: 10px;
-    top: 10px;
+.spd-chart-wrapper, .dst-chart-wrapper {
+    position: relative;
+    .from-to-button {
+        display: block;
+        position: absolute;
+        z-index: 10;
+        right: 10px;
+        top: 10px;
+        width: 5em;
+    }
 }
 
 .chart {
@@ -82,8 +198,13 @@ $modal-background-background-color: rgba(0, 0, 0, 0.5);;
 
 .scale-text {
     font-family: sans-serif;
-    font-size: 10px;
+    font-size: 14px;
     text-align: center;
+    fill: #888;
+}
+
+.spd-color-scale {
+    stroke-width: 5px;
 }
 
 .chart-line {
@@ -91,16 +212,59 @@ $modal-background-background-color: rgba(0, 0, 0, 0.5);;
     fill: transparent;
 }
 
-.line-01 {
-    stroke: red;
+.color-0 {
+    stroke: black;
+    fill: black;
 }
 
-.line-02 {
-    stroke: orange;
+.color-1 {
+    stroke: $color01;
+    fill: $color01;
 }
 
-.line-03 {
-    stroke: orchid;
+.color-2 {
+    stroke: $color02;
+    fill: $color02;
+}
+
+.color-3 {
+    stroke: $color03;
+    fill: $color03;
+}
+
+.color-4 {
+    stroke: $color04;
+    fill: $color04;
+}
+
+.color-5 {
+    stroke: $color05;
+    fill: $color05;
+}
+
+.color-6 {
+    stroke: $color06;
+    fill: $color06;
+}
+
+.color-7 {
+    stroke: $color07;
+    fill: $color07
+}
+
+.color-8 {
+    stroke: $color08;
+    fill: $color08;
+}
+
+.color-9 {
+    stroke: $color09;
+    fill: $color09;
+}
+
+.color-10 {
+    stroke: $color10;
+    fill: $color10;
 }
 
 .field.chart-type-buttons {
@@ -110,44 +274,105 @@ $modal-background-background-color: rgba(0, 0, 0, 0.5);;
 .data-table-wrapper {
     overflow-x: scroll;
     display: flex;
-}
+    height: 600px;
 
-.data-table {
-    margin-left: 1rem;
-    margin-right: 1rem;
-}
+    .data-table {
+        margin-left: 1rem;
+        margin-right: 1rem;
 
-.data-table-wrapper .data-table:first-child {
-    margin-left: 0;
-}
+        thead {
+            th {
+                position: -webkit-sticky;
+                position: sticky;
+                z-index: 2;
+                background-color: $info-light;
+                color: $info;
+                vertical-align: bottom;
+            }
 
-.data-table caption {
-    text-align: left;
-    padding: 0.25rem 0 0.25rem 0;
-    font-size: 0.8rem;
-    text-align: center;
-}
+            tr:first-child th {
+                top: 0;
+            }
 
-table.data-table td {
-    text-align: right;
-}
+            tr:nth-child(2) th {
+                top: 40px;
+            }
 
-.data-table caption.color-01 {
-    background-color: red;
-    color: white;
-    width: 4em;
-}
+            th.sticky-col {
+                z-index: 3;
+            }
+        }
 
-.data-table caption.color-02 {
-    background-color: orange;
-    color: white;
-    width: 4em;
-}
+        .sticky-col {
+            position: -webkit-sticky;
+            position: sticky;
+            z-index: 1;
+            left: 0;
+        }
 
-.data-table caption.color-03 {
-    background-color: orchid;
-    color: white;
-    width: 4em;
+        th.sticky-col {
+            background-color: $info;
+            color: white;
+        }
+
+        td.sticky-col {
+            background-color: $info-light;
+            color: $info;
+        }
+    
+        td {
+            text-align: right;
+        }
+
+        .bg-color1 {
+            background-color: $color01;
+            color: white;
+        }
+
+        .bg-color2 {
+            background-color: $color02;
+            color: white;
+        }
+
+        .bg-color3 {
+            background-color: $color03;
+            color: white;
+        }
+        .bg-color4 {
+            background-color: $color04;
+            color: white;
+        }
+        .bg-color5 {
+            background-color: $color05;
+            color: white;
+        }
+
+        .bg-color6 {
+            background-color: $color06;
+            color: white;
+        }
+        .bg-color7 {
+            background-color: $color07;
+            color: white;
+        }
+        .bg-color8 {
+            background-color: $color08;
+            color: white;
+        }
+        .bg-color9 {
+            background-color: $color09;
+            color: white;
+        }
+        .bg-color10 {
+            background-color: $color10;
+            color: white;
+        }
+
+    }
+
+    .data-table:first-child {
+        margin-left: 0;
+    }
 }
 
 .history-title {
@@ -182,11 +407,25 @@ table.data-table td {
     border-bottom-style: solid;
 }
 
-.settings .label {
-    margin-left: 0.5rem;
-    margin-right: 1rem;
-}
+.container.setting {
+    h2 {
+        font-size: 1.3rem;
+        font-weight: bold;
+        border-bottom: solid 1px #777;
+        margin-bottom: 1rem;
+        margin-top: 1rem;
+        padding-bottom: 0.3rem;
+    }
 
-.settings .button {
-    width: 5rem;
+    .card {
+        margin-bottom: 0.5rem;
+    }
+
+    .button {
+        width: 5rem;
+    }
+
+    .toggle-button.is-selected::before {
+        content: "✔ ";
+    }
 }

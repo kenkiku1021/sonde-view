@@ -7,41 +7,35 @@ import agh from "agh.sprintf";
 class SondeDataItem {
     /*
         Units:
-        Altitude and Height : ft
+        Altitude and Height : m
         WindHeading : true_deg / to
         WindSpeed : m/s
         Temperature : ℃
     */
 
     constructor(value, magDeclination = 0) {
-        this.altitude = value.altitude ? value.altitude : 0;
-        this.height = value.height ? value.height : 0;
-        this.temperature = value.temperature ? value.temperature : 0;
-        this.windHeading = value.windheading ? value.windheading : 0;
-        this.windSpeed = value.windspeed ? value.windspeed : 0;
+        this.altitude = value.altitude ? value.altitude : null;
+        this.height = value.height ? value.height : null;
+        this.temperature = value.temperature ? value.temperature : null;
+        this.windHeading = value.windheading ? value.windheading : null;
+        this.windSpeed = value.windspeed ? value.windspeed : null;
         this.magDeclination = magDeclination;
     }
 
-    getAltitude() {
-        let value = this.altitude;
-        switch(Setting.getMslUnit()) {
-            case Unit.AltitudeUnitEnum.M:
-                value = Unit.conv_ft_to_m(this.altitude);
-                break;
-        }
-
-        return value;
+    getAltitudeAsMeter() {
+        return this.altitude;
     }
 
-    getHeight() {
-        let value = this.height;
-        switch(Setting.getAglUnit()) {
-            case Unit.AltitudeUnitEnum.M:
-                value = Unit.conv_ft_to_m(this.height);
-                break;
-        }
+    getAltitudeAsFt() {
+        return Unit.conv_m_to_ft(this.altitude);
+    }
 
-        return value;
+    getHeightAsMeter() {
+        return this.height;
+    }
+
+    getHeightAsFt() {
+        return Unit.conv_m_to_ft(this.height);
     }
 
     getTemperature() {
@@ -65,18 +59,31 @@ class SondeDataItem {
         return value;
     }
 
-    getWindSpeed() {
-        let value = this.windSpeed;
-        switch(Setting.getWindspeedUnit()) {
-            case Unit.WindspeedUnitEnum.KT:
-                value = Unit.conv_m_s_to_kt(this.windSpeed);
-                break;
-            case Unit.WindspeedUnitEnum.KM_PER_HOUR:
-                value = Unit.conv_m_s_to_km_h(this.windSpeed);
+    getWindHeadingForChart() {
+        let value = this.windHeading;
+        switch(Setting.getMagDeclination()) {
+            case Direction.MagDeclinationEnum.MAG:
+                value += this.magDeclination;
                 break;
         }
-
         return value;
+    }
+
+    getWindSpeedAsMerterPerSec() {
+        return this.windSpeed;
+    }
+
+    getWindSpeedAsKmPerHour() {
+        return Unit.conv_m_s_to_km_h(this.windSpeed);
+    }
+
+    getWindSpeedAsKt() {
+        return Unit.conv_m_s_to_kt(this.windSpeed);
+    }
+
+    getWindSpeedForChart() {
+        // get wind speed as [m/s] (for chart)
+        return this.windSpeed;
     }
 }
 
@@ -102,7 +109,11 @@ class SondeData {
         this.lng = data.lng ? data.lng : this.lng;
         this.magDeclination = data.mag_dec ? data.mag_dec : this.magDeclination;
         this.measuredAt = data.measured_at ? data.measured_at.toDate() : this.measuredAt;
-        this._records = data.values.map(v => new SondeDataItem(v));
+        this._records = data.values.map(v => new SondeDataItem(v, this.magDeclination));
+    }
+
+    getID() {
+        return this.id;
     }
 
     getDate() {
@@ -110,12 +121,46 @@ class SondeData {
     }
 
     getTime() {
-        console.log(this.measuredAt);
         return agh.sprintf("%02d:%02d", this.measuredAt.getHours(), this.measuredAt.getMinutes());
     }
 
     records() {
         return this._records;
+    }
+
+    maxSpeed() {
+        const windSpeeds = this._records.map(record => record.getWindSpeedForChart()).sort((a, b) => a - b);
+        return windSpeeds[windSpeeds.length - 1];
+    }
+
+    dstChartValues(invert = false) {
+        let x = 0;
+        let y = 0;
+        const angleOffset = invert ? 90 : -90;
+        const values = [[x, y]];
+        let prevHeight = 0;
+        this._records.forEach(item => {
+            const dh = item.getHeightAsMeter() - prevHeight;
+            const dt = 60.0 * (dh / 100.0);
+            x += dt * item.getWindSpeedForChart() * Math.cos(Unit.degToRad(item.getWindHeadingForChart() + angleOffset));
+            y += dt * item.getWindSpeedForChart() * Math.sin(Unit.degToRad(item.getWindHeadingForChart() + angleOffset));
+            values.push([x, y]);
+            prevHeight = item.getHeightAsMeter();
+        });
+
+        return values;
+    }
+
+    minHeight() {
+        return this._records[0].getHeightAsMeter();
+    }
+
+    maxHeight() {
+        return this._records[this._records.length-1].getHeightAsMeter();
+    }
+
+    getRecordByHeight(height) {
+        return this._records.find(record => record.getHeightAsMeter() == height);
     }
 }
 
