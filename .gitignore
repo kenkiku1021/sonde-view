@@ -1,6 +1,7 @@
 sample-data
 *.sh
 *.log
+firebase-config.js
 node_modules
 /client/.firebase
 /client/.firebaserc
