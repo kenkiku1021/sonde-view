@@ -5,6 +5,7 @@ import ErrorPage from "./error-page";
 import ChartPage from "./chart-page";
 import HistoryPage from "./history-page";
 import SetupPage from "./setup-page";
+import DownloadPage from "./download-page";
 import firebase from "firebase/app";
 import "firebase/firestore";
 var firebaseui = require('firebaseui');
@@ -52,8 +53,10 @@ function startApp() {
     }).then(() => {
         m.route(root, "/main", {
             "/main": ChartPage,
+            "/main/:date": ChartPage,
             "/history": HistoryPage,
             "/setup": SetupPage,
+            "/download": DownloadPage,
             "/error/:err": ErrorPage,
         });
     });    

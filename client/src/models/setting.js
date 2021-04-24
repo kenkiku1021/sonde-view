@@ -8,6 +8,8 @@ const DST_CHART_MODE = 1;
 const SPD_CHART_MODE = 2;
 const MIN_DATA_LIST_DURATION = 1;
 const MAX_DATA_LIST_DURATION = 12;
+const SORT_ORDER_ASC = 1;
+const SORT_ORDER_DESC = 2;
 
 class SettingData {
     constructor() {
@@ -25,6 +27,7 @@ class SettingData {
         this.dstChartShowFrom = false;
         this.spdChartShowFrom = false;
         this.dataListDuration = 6; // 6hours
+        this.sortOrder = SORT_ORDER_ASC; 
         this.load();
     }
 
@@ -229,6 +232,22 @@ class SettingData {
             values.push(v);
         }
         return values;
+    }
+
+    isSortOrderAscend() {
+        return this.sortOrder == SORT_ORDER_ASC;
+    }
+
+    isSortOderDescend() {
+        return this.sortOrder == SORT_ORDER_DESC;
+    }
+
+    setSortOrderAscend() {
+        this.sortOrder = SORT_ORDER_ASC;
+    }
+
+    setSortOderDescend() {
+        this.sortOrder = SORT_ORDER_DESC;
     }
 }
 

@@ -8,7 +8,7 @@ import Unit from "./models/unit";
 const SetupPage = {
     view: vnode => {
         return [
-            m(UI.NavBar, {title: "設定"}),
+            m(UI.NavBar, {title: i18next.t("menuSetup")}),
             m("main", [
                 m(".container.setting", [
                     m("h2", i18next.t("titleUnits")),
@@ -124,6 +124,27 @@ const SetupPage = {
                                 Setting.toggleTemperatureUnit();
                             },
                         }, "℃"),
+                    ]),
+
+                    m("h2", i18next.t("titleView")),
+
+                    m(UI.SettingCard, {
+                        title: i18next.t("sortOrder"),
+                    }, [
+                        m(".buttons.has-addons", [
+                            m(UI.ToggleButton, {
+                                selected: Setting.isSortOrderAscend(),
+                                onclick: e => {
+                                    Setting.setSortOrderAscend();
+                                },
+                            }, i18next.t("ascend")),
+                            m(UI.ToggleButton, {
+                                selected: Setting.isSortOderDescend(),
+                                onclick: e => {
+                                    Setting.setSortOderDescend();
+                                },
+                            }, i18next.t("descend")),
+                        ]),
                     ]),
 
                     m("h2", i18next.t("titleOther")),

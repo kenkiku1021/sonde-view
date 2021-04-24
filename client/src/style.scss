@@ -383,29 +383,36 @@ $color10: gainsboro;
 }
 
 .history-list {
-    margin: 0.5rem 1rem 1rem 1rem;
+    li {
+        border: solid 1px #aaa;
+        border-bottom-style: none;
+        padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+        display: flex;
+        justify-content: space-between;
+
+        a {
+            display: block;
+            flex-grow: 10;
+        }
+    }
+
+    li:hover {
+        background-color: $link-light;
+    }
+
+    li:first-child {
+        border-top-left-radius: 0.4rem;
+        border-top-right-radius: 0.4rem;
+    }
+    
+    li:last-child {
+        border-bottom-left-radius: 0.4rem;
+        border-bottom-right-radius: 0.4rem;
+        border-bottom-style: solid;
+    }
+    
 }
 
-.history-list a {
-    display: block;
-    padding: 0.2rem 0.5rem 0.2rem 0.5rem;
-}
-
-.history-list li {
-    border: solid 1px #aaa;
-    border-bottom-style: none;
-}
-
-.history-list li:first-child {
-    border-top-left-radius: 0.4rem;
-    border-top-right-radius: 0.4rem;
-}
-
-.history-list li:last-child {
-    border-bottom-left-radius: 0.4rem;
-    border-bottom-right-radius: 0.4rem;
-    border-bottom-style: solid;
-}
 
 .container.setting {
     h2 {

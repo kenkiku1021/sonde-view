@@ -10,8 +10,32 @@ import i18next from "i18next";
 let dataList;
 const ChartPage = {
     oninit: vnode => {
+        vnode.state.date = null;
+        if(vnode.attrs.date) {
+            vnode.state.date = new Date();
+            vnode.state.date.setTime(Number(vnode.attrs.date));
+        }
         dataList = new SondeDataList();
-        dataList.fetch();
+        dataList.fetch(vnode.state.date);
+        window.scrollTo(0, 0);
+    },
+
+    onupdate: vnode => {
+        const timeValue = vnode.attrs.date ? Number(vnode.attrs.date) : null;
+        if(vnode.state.date === null && timeValue === null) {
+            // do nothing
+        }
+        else if((vnode.state.date === null && timeValue !== null) || (vnode.state.date !== null && timeValue === null)
+            || vnode.state.date.getTime() !== timeValue) {
+                if(timeValue === null) {
+                    vnode.state.date = null;
+                }
+                else {
+                    vnode.state.date = new Date();
+                    vnode.state.date.setTime(timeValue);
+                }
+                dataList.fetch(vnode.state.date);
+        }
     },
 
     view: vnode => {

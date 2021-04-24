@@ -9,7 +9,10 @@ const DataTable = {
     view: vnode => {
         const dataList = vnode.attrs.dataList;
         const colspan = Setting.getDataTableColCount();
-        const keyHeights = dataList.tableKeyHeights().reverse();
+        const keyHeights = dataList.tableKeyHeights();
+        if(Setting.isSortOderDescend()) {
+            keyHeights.reverse();
+        }
         return m(".data-table-wrapper", [
             m("table.table.is-bordered.data-table", [
                 m("thead", [

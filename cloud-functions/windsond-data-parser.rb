@@ -44,6 +44,8 @@ class WindsondDataParser
             elsif !header_parsed
                 parse_header line
                 header_parsed = true
+            elsif line == ""
+                # empty line
             else
                 parse_line line
             end
@@ -76,7 +78,7 @@ class WindsondDataParser
         if line =~ /utc_time=(\d{4}\-\d{2}\-\d{2} \d{2}:\d{2})/
             @measured_at = Time.parse($1 + "+0000")
         end
-        if line =~ /mag_dec=(\-?[\d\.]+)/
+        if line =~ /mag_dec=([\-\+]?[\d\.]+)/
             @mag_dec = $1.to_f
         end
     end

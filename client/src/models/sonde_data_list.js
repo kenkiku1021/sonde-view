@@ -22,27 +22,39 @@ class SondeDataList {
         this.lastFetchedAt = null;
     }
 
-    fetch() {
+    fetch(date = null) {
         if(!this.lastFetchedAt) {
             this.lastFetchedAt = new Date();
         }
-        const doc = this.sondeDataRef.orderBy("measured_at", "desc").limit(FETCH_COUNT).get().then(querySnapshot => {
+        let query = this.sondeDataRef;
+        if(date) {
+            query = query.where("measured_at", "<=", date);
+        }
+
+        query.orderBy("measured_at", "desc").limit(FETCH_COUNT).get().then(querySnapshot => {
             console.log("fetched");
             this._list = [];
+            const prevSelectedId = this._selectedData ? this._selectedData.id : null;
             this._selectedData = null;
             const duration = Setting.getDataListDuration() * 60 * 60 * 1000;
             querySnapshot.forEach(doc => {
                 const newData = new SondeData(doc.id, doc.data());
-                if(!this._selectedData) {
-                    this._list.push(newData);
-                    this._selectedData = newData;
+                if(!date) {
+                    date = newData.measuredAt;
                 }
-                else if(this._selectedData.measuredAt.getTime() - newData.measuredAt.getTime() <= duration) {
+
+                if(newData.id === prevSelectedId) {
+                    this._selectedData = newData;
+                    this._list.push(newData);
+                }
+                else if(date.getTime() - newData.measuredAt.getTime() <= duration) {
                     this._list.push(newData);
                 }
             });
-            //console.log(this._list);
-            if(this.lastFetchedAt.getTime() - this._selectedData.measuredAt.getTime() < FETCH_TIMEOUT) {
+            if(!this._selectedData && this._list.length > 0) {
+                this._selectedData = this._list[0];
+            }
+            if(this._selectedData && this.lastFetchedAt.getTime() - this._selectedData.measuredAt.getTime() < FETCH_TIMEOUT) {
                 setTimeout(() => {this.fetch();}, FETCH_INTERVAL);
             }
             else {
