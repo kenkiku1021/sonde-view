@@ -9,6 +9,7 @@ import DownloadPage from "./download-page";
 import firebase from "firebase/app";
 import "firebase/firestore";
 var firebaseui = require('firebaseui');
+import "firebaseui/dist/firebaseui.css";
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { i18nResources } from "./resources";
@@ -40,6 +41,7 @@ const uiConfig = {
     signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.EmailAuthProvider.PROVIDER_ID,
     ],
 };
 ui.start('#firebaseui-auth-container', uiConfig);
@@ -59,7 +61,11 @@ function startApp() {
             "/download": DownloadPage,
             "/error/:err": ErrorPage,
         });
-    });    
+
+        window.onresize = e => {
+            m.redraw();
+        };
+    });
 }
 
 

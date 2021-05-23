@@ -101,6 +101,7 @@ class SondeData {
         this.lng = 0;
         this.magDeclination = 0;
         this.measuredAt = new Date();
+        this.updatedAt = null;
         this._records = [];
     }
 
@@ -109,6 +110,7 @@ class SondeData {
         this.lng = data.lng ? data.lng : this.lng;
         this.magDeclination = data.mag_dec ? data.mag_dec : this.magDeclination;
         this.measuredAt = data.measured_at ? data.measured_at.toDate() : this.measuredAt;
+        this.updatedAt = data.updated_at ? data.updated_at.toDate() : this.updatedAt;
         this._records = data.values.map(v => new SondeDataItem(v, this.magDeclination));
     }
 
@@ -162,6 +164,16 @@ class SondeData {
     getRecordByHeight(height) {
         return this._records.find(record => record.getHeightAsMeter() == height);
     }
+
+    getLastItem() {
+        if(this._records.length === 0) {
+            return null;
+        }
+        else {
+            return this._records[this._records.length - 1];
+        }
+    }
+
 }
 
 export {SondeData, SondeDataItem};

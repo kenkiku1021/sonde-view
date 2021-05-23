@@ -25,6 +25,7 @@ class WindsondDataParser
         @measured_at = nil
         @mag_dec = 0
         @values = []
+        @updated_at = Time.new
     end
 
     def valid?(filename)
@@ -59,7 +60,8 @@ class WindsondDataParser
             lng: @lng,
             measured_at: @measured_at,
             mag_dec: @mag_dec,
-            values: @values
+            values: @values,
+            updated_at: @updated_at,
         }
     end
 

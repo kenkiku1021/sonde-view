@@ -172,6 +172,14 @@ $color10: gainsboro;
         top: 10px;
         width: 5em;
     }
+    .zoom-button {
+        display: block;
+        position: absolute;
+        z-index: 10;
+        right: 10px;
+        bottom: 10px;
+        width: 3em;
+    }
 }
 
 .chart {
@@ -201,6 +209,13 @@ $color10: gainsboro;
     font-size: 14px;
     text-align: center;
     fill: #888;
+}
+
+.date-text {
+    font-family: sans-serif;
+    font-size: 14px;
+    text-align: left;
+    fill: #555;
 }
 
 .spd-color-scale {
@@ -273,18 +288,17 @@ $color10: gainsboro;
 
 .data-table-wrapper {
     overflow-x: scroll;
-    display: flex;
-    height: 600px;
 
     .data-table {
-        margin-left: 1rem;
-        margin-right: 1rem;
+        margin-left: 0;
+        margin-right: 0;
+        width: max-content;
 
         thead {
             th {
-                position: -webkit-sticky;
-                position: sticky;
-                z-index: 2;
+                // position: -webkit-sticky;
+                // position: sticky;
+                // z-index: 2;
                 background-color: $info-light;
                 color: $info;
                 vertical-align: bottom;
@@ -308,6 +322,19 @@ $color10: gainsboro;
             position: sticky;
             z-index: 1;
             left: 0;
+            width: 4em;
+        }
+
+        .sticky-col:nth-child(2) {
+            left: 4em;
+        }
+
+        .sticky-col:nth-child(3) {
+            left: 8em;
+        }
+
+        .sticky-col:nth-child(4) {
+            left: 12em;
         }
 
         th.sticky-col {
@@ -370,8 +397,16 @@ $color10: gainsboro;
 
     }
 
-    .data-table:first-child {
-        margin-left: 0;
+    .charsize-S {
+        font-size: 0.7em;
+    }
+
+    .charsize-M {
+        font-size: 0.85em;
+    }
+
+    .charsize-L {
+        font-size: 1em;
     }
 }
 
@@ -413,6 +448,23 @@ $color10: gainsboro;
     
 }
 
+.direction-color-legend-wrapper {
+    width: 300px;
+    height: 300px;
+    padding: 10px;
+
+    .direction-color-legend {
+        width: 280px;
+        height: 250px;
+    }
+
+    .deg-label {
+        font-family: sans-serif;
+        font-size: 14px;
+        text-align: center;
+        fill: black;
+    }
+}
 
 .container.setting {
     h2 {

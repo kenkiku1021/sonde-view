@@ -14,6 +14,7 @@ const HistoryPage = {
             m(UI.NavBar, {title: i18next.t("menuHistory")}),
             m("main", [
                 m(".container", [
+                    m(HistorySearchView, {history: vnode.state.history}),
                     vnode.state.history.list().map(dateItem => {
                         return m(HistoryCardView, {
                             date: dateItem.date,
@@ -24,6 +25,26 @@ const HistoryPage = {
             ]),
         ];
 
+    }
+};
+
+const HistorySearchView = {
+    view: vnode => {
+        return m(".field.has-addons.my-4.mx-2", [
+            m(".control", [
+                m("a.button.is-static", [
+                    i18next.t("historyDate"),
+                ]),
+            ]),
+            m(".control", [
+                m("input.input[type=date]", {
+                    value: vnode.attrs.history.dateFrom(),
+                    oninput: e => {
+                        vnode.attrs.history.setDateFrom(e.target.value);
+                    }
+                }),
+            ]),
+        ]);
     }
 };
 
@@ -58,9 +79,6 @@ const HistoryCardView = {
                                 href: m.buildPathname("/main/:date", {date: item.measuredAt.getTime()}),
                             }, [
                                 item.getTime(),
-                            ]),
-                            m("span.icon", [
-                                m("i.fas.fa-angle-right"),
                             ]),
                         ]);
                     }),

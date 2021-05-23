@@ -3,6 +3,7 @@ import Setting from "./setting";
 import {SondeData, SondeDataItem} from "./sonde_data";
 import firebase from "firebase/app";
 import "firebase/firestore";
+import agh from "agh.sprintf";
 
 const SONDEVIEW_COLLECTION = "sondeview"; // collection name in Firebase
 const FETCH_COUNT = 10;
@@ -86,17 +87,28 @@ class SondeDataList {
         this._list.forEach(data => {
             data.records().forEach(record => {
                 const height = Math.round(record.getHeightAsMeter());
-                if(keyHeights.indexOf(height) == -1) {
-                    keyHeights.push(height);
+                const altitude = Math.round(record.getAltitudeAsMeter());
+                if(!keyHeights.some(x => x[0] === height)) {
+                    keyHeights.push([height, altitude]);
                 }
             });
         });
-        keyHeights.sort((a, b) => a - b);
+        keyHeights.sort((a, b) => a[0] - b[0]);
         return keyHeights;
     }
 
     autoUpdateEnabled() {
         return !!this.lastFetchedAt;
+    }
+
+    lastUpdatedAt() {
+        if(this._list.length === 0) {
+            return "";
+        }
+        else {
+            const data = this._list[this._list.length - 1];
+            return data.updatedAt ? agh.sprintf("%02d:%02d", data.updatedAt.getHours(), data.updatedAt.getMinutes()) : "";
+        }
     }
 }
 

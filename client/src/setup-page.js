@@ -147,6 +147,50 @@ const SetupPage = {
                         ]),
                     ]),
 
+                    m(UI.SettingCard, {
+                        title: i18next.t("tableCharSize"),
+                    }, [
+                        m(".buttons", [
+                            m(UI.ToggleButton, {
+                                selected: Setting.getCharSize() == "S",
+                                onclick: e => {
+                                    Setting.setCharSize("S");
+                                },
+                            }, i18next.t("tableCharSizeS")),
+                            m(UI.ToggleButton, {
+                                selected: Setting.getCharSize() == "M",
+                                onclick: e => {
+                                    Setting.setCharSize("M");
+                                },
+                            }, i18next.t("tableCharSizeM")),
+                            m(UI.ToggleButton, {
+                                selected: Setting.getCharSize() == "L",
+                                onclick: e => {
+                                    Setting.setCharSize("L");
+                                },
+                            }, i18next.t("tableCharSizeL")),
+                        ]),
+                    ]),
+
+                    m(UI.SettingCard, {
+                        title: i18next.t("tableBackgroundColor"),
+                    }, [
+                        m(".buttons.has-addons", [
+                            m(UI.ToggleButton, {
+                                selected: Setting.isDataTableBackgroundColorNone(),
+                                onclick: e => {
+                                    Setting.setDataTableBackgroundColorNone();
+                                },
+                            }, i18next.t("tableBackgroundColorNone")),
+                            m(UI.ToggleButton, {
+                                selected: Setting.isDataTableBackgroundColorByDirection(),
+                                onclick: e => {
+                                    Setting.setDataTableBackgroundColorByDirection();
+                                },
+                            }, i18next.t("tableBackgroundColorByDirection")),
+                        ]),
+                    ]),
+
                     m("h2", i18next.t("titleOther")),
                     
                     m(UI.SettingCard, {

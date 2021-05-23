@@ -3,9 +3,14 @@ import Setting from "./setting";
 import {SondeData, SondeDataItem} from "./sonde_data";
 import firebase from "firebase/app";
 import "firebase/firestore";
+import agh from "agh.sprintf";
 
 const SONDEVIEW_COLLECTION = "sondeview"; // collection name in Firebase
 const HISTORY_COUNT = 100;
+
+function formatDate(d) {
+    return agh.sprintf("%04d-%02d-%02d", d.getFullYear(), d.getMonth() + 1, d.getDate());
+}
 
 //
 // MUST initialize firebase before create instance of SondeDataList
@@ -13,15 +18,19 @@ const HISTORY_COUNT = 100;
 
 class History {
     constructor() {
+        const today = new Date();
+        this._dateFrom = new Date();
         this.db = firebase.firestore();
         this.sondeDataRef = this.db.collection(SONDEVIEW_COLLECTION);
         this._dateList = [];
     }
 
-    fetch(dateFrom = null) {
-        if(!dateFrom) {
+    fetch() {
+        let dateFrom = this._dateFrom;
+        if(this._dateFrom == "") {
             dateFrom = new Date();
         }
+        this._dateList = [];
         this.sondeDataRef.where("measured_at", "<=", dateFrom).orderBy("measured_at", "desc").limit(HISTORY_COUNT).get().then(querySnapshot => {
             let currentDateText;
             let currentData;
@@ -47,6 +56,20 @@ class History {
 
     list() {
         return this._dateList;
+    }
+
+    dateFrom() {
+        return formatDate(this._dateFrom);
+    }
+
+    setDateFrom(value) {
+        if(value.match(/^(\d{4})\-(\d{2})\-(\d{2})$/)) {
+            const year = Number(RegExp.$1);
+            const month = Number(RegExp.$2) - 1;
+            const day = Number(RegExp.$3);
+            this._dateFrom = new Date(year, month, day, 23, 59, 59);
+            this.fetch();
+        }
     }
 }
 

@@ -17,6 +17,14 @@ const Direction = {
     validMagDeclination: d => {
         return d == Direction.MagDeclinationEnum.TRUE || d == Direction.MagDeclinationEnum.MAG;
     },
+
+    DIRECTION_BG_COLOR_L_VALUE: 85,
+
+    directionBackgroundColor: d => {
+        const hslColor = `hsl(${d}, 100%, ${Direction.DIRECTION_BG_COLOR_L_VALUE}%)`;
+        return hslColor;
+    },
+
 };
 
 export default Direction;

@@ -5,6 +5,7 @@ require "google/cloud/firestore"
 require "./windsond-data-parser"
 
 FIRESTORE_COLLECTION = "sondeview"
+DOWNLOAD_DATA_COLLECTION = "download_data"
 
 FunctionsFramework.cloud_event "parse_windsond" do |event|
   # parse Windsond data and store into firestore DB
@@ -48,6 +49,37 @@ FunctionsFramework.cloud_event "parse_windsond" do |event|
   end
 end
 
+FunctionsFramework.cloud_event "file_uploaded" do |event|
+  # store uploaded files into firestore
+
+  # The event parameter is a CloudEvents::Event::V1 object.
+  # See https://cloudevents.github.io/sdk-ruby/latest/CloudEvents/Event/V1.html
+  payload = event.data
+
+  storage = Google::Cloud::Storage.new
+  bucket = storage.bucket(payload['bucket'])
+  file = bucket.file(payload['name'])
+  file.content_type = "application/octet_stream"
+  logger.info "file updated in bucket: #{bucket.name}  name: #{file.name}"
+
+  save_download_data file
+end
+
+FunctionsFramework.cloud_event "file_deleted" do |event|
+  # delete file info from firestore
+
+  # The event parameter is a CloudEvents::Event::V1 object.
+  # See https://cloudevents.github.io/sdk-ruby/latest/CloudEvents/Event/V1.html
+  payload = event.data
+
+  storage = Google::Cloud::Storage.new
+  #logger.info "Bucket: #{payload['bucket']}"
+  #logger.info "File: #{payload['name']}"
+  logger.info "file deleteed in bucket: #{payload['bucket']}  name: #{payload['name']}"
+
+  delete_download_data payload['name']
+end
+
 def log_error(ex)
   if ex.instance_of? Exception
     msg = ex.message + "\n" + ex.backtrace.join("\n")
@@ -70,5 +102,22 @@ def save_measure_data(data)
   key = get_key(data)
   doc = firestore.doc("#{FIRESTORE_COLLECTION}/#{key}")
   doc.set data
+  key
+end
+
+def save_download_data(file)
+  firestore = Google::Cloud::Firestore.new
+  key = file.name
+  doc = firestore.doc("#{DOWNLOAD_DATA_COLLECTION}/#{key}")
+  file_item = {name: file.name, updated_at: file.updated_at, size: file.size, url: file.public_url}
+  doc.set file_item
+  key
+end
+
+def delete_download_data(filename)
+  firestore = Google::Cloud::Firestore.new
+  key = filename
+  doc = firestore.doc("#{DOWNLOAD_DATA_COLLECTION}/#{key}")
+  doc.delete
   key
 end

@@ -15,6 +15,22 @@ const SPD_COLOR_MAX_H = 255;
 const SPD_COLOR_SCALE_WIDTH = 10;
 const SPD_COLOR_SCALE_X_OFFSET = 5;
 
+function getChartSize() {
+    let size = 1344 / 2;
+    if(window.innerWidth < 1024) {
+        // small screen
+        size = window.innerWidth;
+    }
+    else if(window.innerWidth < 1216) {
+        size = 960 / 2;
+    }
+    else if(window.innerWidth < 1408) {
+        size = 1152 / 2;
+    }
+
+    return size;
+}
+
 const SvgText = {
     view: vnode => {
         return m("text", {
@@ -83,13 +99,23 @@ const BasicChartAxises = {
             }),
             m(SvgLine, {
                 class: "axis",
-                from: [0, 0],
-                to: [w, h],
+                from: [0, h/2*(1.0 - Math.sin(Math.PI/6))],
+                to: [w, h/2*(1.0 + Math.sin(Math.PI/6))],
             }),
             m(SvgLine, {
                 class: "axis",
-                from: [0, h],
-                to: [w, 0],
+                from: [w/2*(1.0 - Math.sin(Math.PI/6)), 0],
+                to: [w/2*(1.0 + Math.sin(Math.PI/6)), h],
+            }),
+            m(SvgLine, {
+                class: "axis",
+                from: [0, h/2*(1.0 + Math.sin(Math.PI/6))],
+                to: [w, h/2*(1.0 - Math.sin(Math.PI/6))],
+            }),
+            m(SvgLine, {
+                class: "axis",
+                from: [w/2*(1.0 + Math.sin(Math.PI/6)), 0],
+                to: [w/2*(1.0 - Math.sin(Math.PI/6)), h],
             }),
         ];
     }
@@ -131,8 +157,13 @@ const BasicChart = {
 
 const DstChart = {
     oninit: vnode => {
-        vnode.state.width = DEFAULT_CHART_WIDTH;
-        vnode.state.height = DEFAULT_CHART_HEIGHT;
+        vnode.state.width = getChartSize();
+        vnode.state.height = getChartSize();
+    },
+
+    onbeforeupdate: vnode => {
+        vnode.state.width = getChartSize();
+        vnode.state.height = getChartSize();
     },
 
     view: vnode => {
@@ -169,6 +200,14 @@ const DstChart = {
                         y: v.y,
                     }, v.label);
                 }),
+                m(SvgText, {
+                    class: "date-text",
+                    x: 10,
+                    y: 20,
+                }, [
+                    i18next.t("updated"),
+                    vnode.attrs.dataList.lastUpdatedAt()
+                ]),
                 vnode.attrs.dataList.list().map((data, dataIdx) => {
                     const isLatest = dataIdx === 0;
                     const values = data.dstChartValues().map((val, valIdx) => {
@@ -204,7 +243,12 @@ const DstChart = {
                 onclick: e => {
                     Setting.setDstChartShowFrom(!Setting.getDstChartShowFrom());
                 }
-            }, i18next.t("btnFrom")),    
+            }, i18next.t("btnFrom")),
+            m("button.button.is-small.zoom-button", {
+                onclick: e => {
+
+                }
+            }, m("i.fas.fa-search-plus")),
         ]);
     },
 
@@ -239,8 +283,13 @@ const DstChart = {
 
 const SpdChart = {
     oninit: vnode => {
-        vnode.state.width = DEFAULT_CHART_WIDTH;
-        vnode.state.height = DEFAULT_CHART_HEIGHT;
+        vnode.state.width = getChartSize();
+        vnode.state.height = getChartSize();
+    },
+
+    onbeforeupdate: vnode => {
+        vnode.state.width = getChartSize();
+        vnode.state.height = getChartSize();
     },
 
     view: vnode => {
@@ -253,14 +302,35 @@ const SpdChart = {
         const scaleTexts = [];
         const colorScaleY1 = (vnode.state.height / 2) + 10;
         const colorScaleY2 = (vnode.state.height / 2) - 20;
+        let spdUnit = Unit.WindspeedUnitEnum.M_PER_SEC;
+        if(Setting.getWindSpeedAsKmPerHour()) {
+            spdUnit = Unit.WindspeedUnitEnum.KM_PER_HOUR;
+        }
+        else if(Setting.getWindSpeedAsKt()) {
+            spdUnit = Unit.WindspeedUnitEnum.KT;
+        }
         for(let i=1; i<=SPD_SCALE_CIRCLE_COUNT; ++i) {
+            let label = "";
+            const spd = scaleStep * i;
+            switch(spdUnit) {
+                case Unit.WindspeedUnitEnum.M_PER_SEC:
+                    label = agh.sprintf("%.1f [m/s]", spd);
+                    break;
+                case Unit.WindspeedUnitEnum.KM_PER_HOUR:
+                    label = agh.sprintf("%.1f [km/s]", Unit.conv_m_s_to_km_h(spd));
+                    break;
+                case Unit.WindspeedUnitEnum.KT:
+                    label = agh.sprintf("%.1f [kt]", Unit.conv_m_s_to_kt(spd));
+                    break;
+            }
+
             scaleTexts.push({
-                label: agh.sprintf("%.1f [m/s]", scaleStep * i),
+                label: label,
                 x: center[0] + 5,
                 y: center[1] + ((vnode.state.height / 2) / (SPD_SCALE_CIRCLE_COUNT + 0.5)) * i + 10,
             });
         }
-        
+
         return m(".spd-chart-wrapper.is-flex-shrink-1", {
             class: !Setting.isSpdChartMode() ? "is-hidden-mobile" : "",
         }, [
@@ -276,6 +346,15 @@ const SpdChart = {
                         y: v.y,
                     }, v.label);
                 }),
+                m(SvgText, {
+                    class: "date-text",
+                    x: 10,
+                    y: 20,
+                }, [
+                    i18next.t("updated"),
+                    " ",
+                    vnode.attrs.data.updatedAt ? agh.sprintf("%02d:%02d", vnode.attrs.data.updatedAt.getHours(), vnode.attrs.data.updatedAt.getMinutes()) : "",
+                ]),
                 vnode.attrs.data.records().map((record, idx) => {
                     const spd = record.getWindSpeedForChart();
                     let heading = record.getWindHeadingForChart();
@@ -301,7 +380,7 @@ const SpdChart = {
                 ]),
                 m("rect", { // color bar
                     class: "spd-color-scale",
-                    fill: "url(#spd-color-scale",
+                    fill: "url(#spd-color-scale)",
                     x: SPD_COLOR_SCALE_X_OFFSET,
                     y: colorScaleY1,
                     width: SPD_COLOR_SCALE_WIDTH,

@@ -10,6 +10,8 @@ const MIN_DATA_LIST_DURATION = 1;
 const MAX_DATA_LIST_DURATION = 12;
 const SORT_ORDER_ASC = 1;
 const SORT_ORDER_DESC = 2;
+const TABLE_BACKGROUND_COLOR_NONE = 1;
+const TABLE_BACKGROUND_COLOR_BY_DIRECTION = 2;
 
 class SettingData {
     constructor() {
@@ -27,7 +29,9 @@ class SettingData {
         this.dstChartShowFrom = false;
         this.spdChartShowFrom = false;
         this.dataListDuration = 6; // 6hours
-        this.sortOrder = SORT_ORDER_ASC; 
+        this.sortOrder = SORT_ORDER_ASC;
+        this.charSize = "M";
+        this.tableBackgroundColor = TABLE_BACKGROUND_COLOR_NONE;
         this.load();
     }
 
@@ -43,7 +47,7 @@ class SettingData {
             if(value && value != "") {
                 const data = JSON.parse(value);
                 for(let key in this) {
-                    this[key] = data[key] ? data[key] : this[key];
+                    this[key] = data[key] !== undefined ? data[key] : this[key];
                 }    
             }
         }
@@ -51,12 +55,6 @@ class SettingData {
 
     getDataTableColCount() {
         let count = 1;
-        if(this.mslAsMeter) {
-            count++;
-        }
-        if(this.mslAsFt) {
-            count++;
-        }
         if(this.windSpeedAsMeterPerSec) {
             count++;
         }
@@ -244,10 +242,40 @@ class SettingData {
 
     setSortOrderAscend() {
         this.sortOrder = SORT_ORDER_ASC;
+        this.save();
     }
 
     setSortOderDescend() {
         this.sortOrder = SORT_ORDER_DESC;
+    }
+
+    getCharSize() {
+        return this.charSize;
+    }
+
+    setCharSize(value) {
+        if(value == "S" || value == "M" || value == "L") {
+            this.charSize = value;
+            this.save();
+        }
+    }
+
+    isDataTableBackgroundColorNone() {
+        return this.tableBackgroundColor == TABLE_BACKGROUND_COLOR_NONE;
+    }
+
+    setDataTableBackgroundColorNone() {
+        this.tableBackgroundColor = TABLE_BACKGROUND_COLOR_NONE;
+        this.save();
+    }
+
+    isDataTableBackgroundColorByDirection() {
+        return this.tableBackgroundColor == TABLE_BACKGROUND_COLOR_BY_DIRECTION;
+    }
+
+    setDataTableBackgroundColorByDirection() {
+        this.tableBackgroundColor = TABLE_BACKGROUND_COLOR_BY_DIRECTION;
+        this.save();
     }
 }
 
