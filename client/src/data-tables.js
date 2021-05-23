@@ -124,10 +124,10 @@ const DataTable = {
                                 Setting.getMslAsFt() ? m("td.sticky-col", Math.round(Unit.conv_m_to_ft(h[1]))) : "",
                                 dataList.list().map(data => {
                                     const record = data.getRecordByHeight(h[0]);
-                                    const bgColorValue = Setting.isDataTableBackgroundColorByDirection() ? Direction.directionBackgroundColor(record.getWindHeading()) : "none";
-                                    const style = `background-color: ${bgColorValue}`;
                                     if(record) {
-                                        return [
+                                        const bgColorValue = Setting.isDataTableBackgroundColorByDirection() ? Direction.directionBackgroundColor(record.getWindHeading()) : "none";
+                                        const style = `background-color: ${bgColorValue}`;
+                                            return [
                                             m("td.has-text-weight-bold", {style: style}, Math.round(record.getWindHeading())),
                                             Setting.getWindSpeedAsMerterPerSec() ? m("td",  {style: style}, agh.sprintf("%.1f", record.getWindSpeedAsMerterPerSec())) : "",
                                             Setting.getWindSpeedAsKmPerHour() ? m("td", {style: style},  agh.sprintf("%.1f", record.getWindSpeedAsKmPerHour())) : "",

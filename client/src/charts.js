@@ -317,7 +317,7 @@ const SpdChart = {
                     label = agh.sprintf("%.1f [m/s]", spd);
                     break;
                 case Unit.WindspeedUnitEnum.KM_PER_HOUR:
-                    label = agh.sprintf("%.1f [km/s]", Unit.conv_m_s_to_km_h(spd));
+                    label = agh.sprintf("%.1f [km/h]", Unit.conv_m_s_to_km_h(spd));
                     break;
                 case Unit.WindspeedUnitEnum.KT:
                     label = agh.sprintf("%.1f [kt]", Unit.conv_m_s_to_kt(spd));
