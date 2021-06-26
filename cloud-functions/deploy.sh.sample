@@ -2,3 +2,16 @@
 gcloud functions deploy parse_windsond\
     --trigger-resource ***TARGET_BUCKET_NAME*** --trigger-event google.storage.object.finalize\
     --runtime ruby27
+
+gcloud functions deploy file_uploaded\
+    --trigger-resource ***TARGET_BUCKET_NAME*** --trigger-event google.storage.object.finalize\
+    --runtime ruby27
+
+gcloud functions deploy file_deleted\
+    --trigger-resource ***TARGET_BUCKET_NAME*** --trigger-event google.storage.object.delete\
+    --runtime ruby27
+
+gcloud functions deploy upload_data\
+    --trigger-http --runtime ruby27\
+    --allow-unauthenticated\
+    --set-env-vars=windview_upload_key=***YOUR_UPLOAD_KEY***

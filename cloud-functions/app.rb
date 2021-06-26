@@ -1,4 +1,6 @@
 require "tmpdir"
+require "cgi"
+require "time"
 require "functions_framework"
 require "google/cloud/storage"
 require "google/cloud/firestore"
@@ -6,6 +8,65 @@ require "./windsond-data-parser"
 
 FIRESTORE_COLLECTION = "sondeview"
 DOWNLOAD_DATA_COLLECTION = "download_data"
+
+class WindviewAuthError < Exception
+end
+
+class WindviewDataError < Exception
+  attr_accessor :errors
+
+  def initialize
+    @errors = []
+  end
+end
+
+FunctionsFramework.http "upload_data" do |request|
+  authkey = request.get_header("HTTP_X_WINDVIEW_KEY")
+  windview_upload_key = ENV["windview_upload_key"]
+  if windview_upload_key.nil? || windview_upload_key == ""
+    logger.error "ENV[windview_upload_key] is not specified"
+  end
+
+  logger.info "data uploaded by http POST"
+  begin
+    if !windview_upload_key || windview_upload_key == "" || windview_upload_key != authkey
+      # auth error
+      raise WindviewAuthError
+    end
+    data = load_data(JSON.parse(request.body.read, symbolize_names: true))
+    logger.info "#{data[:values].count} values found"
+    key = save_measure_data(data)
+    logger.info "data saved (key: #{key})"
+
+    body = {
+      errors: nil
+    }
+    code = 200
+  rescue WindviewAuthError => ex
+    body = {
+      errors: ["Incorrect auth key"],
+    }
+    code = 401
+  rescue WindviewDataError => ex
+    body = {
+      errors: ex.errors,
+    }
+    code = 400
+  rescue => ex
+    log_error ex
+    body = {
+      errors: ["Unknown error"],
+    }
+    code = 500
+  end
+
+  unless body[:errors].nil?
+    body[:errors].each do |err|
+      logger.error err
+    end
+  end
+  Rack::Response.new(JSON.generate(body), code, {"Content-Type" => "application/json"})
+end
 
 FunctionsFramework.cloud_event "parse_windsond" do |event|
   # parse Windsond data and store into firestore DB
@@ -87,6 +148,81 @@ def log_error(ex)
     msg = ex
   end
   logger.error msg
+end
+
+def to_f(val)
+  unless val.is_a?(Numeric)
+    val.tr!("０-９．ー", "0-9.-")
+    if val !~ /^[\d\.]+$/
+      raise "not numeric value"
+    end
+    val = val.to_f
+  end
+  val
+end
+
+def load_data(data)
+  errors = []
+
+  begin
+    lat = to_f(data[:lat])
+    if lat < -90 || lat > 90
+      errors << "Invalid latitude value: #{lat}"
+    end
+    data[:lat] = lat
+  rescue => ex
+    data[:lat] = nil
+  end
+  begin
+    lng = to_f(data[:lng])
+    if lng < -180 || lng > 180
+      errors << "Invalid longitude value: #{lng}"
+    end
+  rescue => ex
+    data[:lng] = nil
+  end
+  begin
+    t = Time.parse(data[:measured_at])
+    data[:measured_at] = t
+  rescue => ex
+    errors << "Invalid measured at time"
+  end
+  begin
+    altitude = to_f(data[:altitude])
+    data[:altitude] = altitude
+  rescue => ex
+    data[:altitude] = nil
+  end
+  begin
+    mag_dec = to_f(data[:mag_dec])
+    data[:mag_dec] = mag_dec
+  rescue => ex
+    data[:mag_dec] = 0
+  end
+  if !data[:values] || data[:values].empty?
+    errors << "Empty measured data"
+  else
+    data[:values].each_index do |i|
+      val = data[:values][i]
+      if !val[:height].is_a?(Numeric)
+        errors << "record #{i} has invalid height value: #{val[:height]}"
+      end
+      if !val[:windheading].is_a?(Numeric) || val[:windheading] < 0 || val[:windheading] >= 360
+        errors << "record #{i} has invalid windheading value: #{val[:windheading]}"
+      end
+      if !val[:windspeed].is_a?(Numeric) || val[:windspeed] < 0
+        errors << "record #{i} has invalid windspeed value: #{val[:windspeed]}"
+      end
+    end
+  end
+
+  unless errors.empty?
+    ex = WindviewDataError.new
+    ex.errors = errors
+    raise ex
+  end
+
+  data
 end
 
 def get_key(data)
