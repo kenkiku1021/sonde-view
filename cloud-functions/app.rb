@@ -191,7 +191,7 @@ def load_data(data)
     altitude = to_f(data[:altitude])
     data[:altitude] = altitude
   rescue => ex
-    data[:altitude] = nil
+    data[:altitude] = 0
   end
   begin
     mag_dec = to_f(data[:mag_dec])
