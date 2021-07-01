@@ -409,7 +409,7 @@ const SpdChart = {
 
     // make stroke color for SpdChart by HSL color
     strokeColor: (idx, count) => {
-        const x = idx / (count - 1);
+        const x = (idx - 1)  / (count - 1);
         let h = SPD_COLOR_MIN_H + (SPD_COLOR_MAX_H - SPD_COLOR_MIN_H) * x;
         if(h < 0) {
             h += 360;
