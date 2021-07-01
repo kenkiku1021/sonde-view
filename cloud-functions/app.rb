@@ -214,6 +214,10 @@ def load_data(data)
         errors << "record #{i} has invalid windspeed value: #{val[:windspeed]}"
       end
     end
+    data[:values].map! do |val|
+      val[:altitude] = data[:altitude] + val[:height]
+      val
+    end
   end
 
   unless errors.empty?
