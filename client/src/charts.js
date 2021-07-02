@@ -16,7 +16,6 @@ const SPD_COLOR_SCALE_WIDTH = 10;
 const SPD_COLOR_SCALE_X_OFFSET = 5;
 const DST_MIN_ZOOM = 1;
 const DST_MAX_ZOOM = 4;
-const DST_ZOOM_STEP = 2;
 
 function getChartSize() {
     let size = 1344 / 2;
@@ -250,7 +249,7 @@ const DstChart = {
             }, i18next.t("btnFrom")),
             m("button.button.zoom-button", {
                 onclick: e => {
-                    vnode.state.zoom += DST_ZOOM_STEP;
+                    vnode.state.zoom *= 2;
                     if(vnode.state.zoom > DST_MAX_ZOOM) {
                         vnode.state.zoom = DST_MIN_ZOOM;
                     }
