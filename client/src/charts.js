@@ -255,6 +255,7 @@ const DstChart = {
                     }
                 }
             }, m("i.fas.fa-search-plus")),
+            m(".zoom-label", agh.sprintf("×%.1f", vnode.state.zoom)),
         ]);
     },
 
