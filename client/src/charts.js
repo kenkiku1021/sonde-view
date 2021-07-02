@@ -14,6 +14,8 @@ const SPD_COLOR_MIN_H = -15;
 const SPD_COLOR_MAX_H = 255;
 const SPD_COLOR_SCALE_WIDTH = 10;
 const SPD_COLOR_SCALE_X_OFFSET = 5;
+const DST_MIN_ZOOM = 1;
+const DST_MAX_ZOOM = 4;
 
 function getChartSize() {
     let size = 1344 / 2;
@@ -159,6 +161,7 @@ const DstChart = {
     oninit: vnode => {
         vnode.state.width = getChartSize();
         vnode.state.height = getChartSize();
+        vnode.state.zoom = DST_MIN_ZOOM;
     },
 
     onbeforeupdate: vnode => {
@@ -173,9 +176,9 @@ const DstChart = {
             return data.dstChartValues();
         }).flat();
         const maxDst = Math.ceil(allDstChartValues.map(v => Math.sqrt(v[0]*v[0] + v[1]*v[1])).reduce(maxCallback, 0) / 1000) * 1000;
-        const basicZoomRatio = (vnode.state.width / ((DST_SCALE_CIRCLE_COUNT + 0.5) * 2)) * DST_SCALE_CIRCLE_COUNT;
+        const basicZoomRatio = vnode.state.zoom * (vnode.state.width / ((DST_SCALE_CIRCLE_COUNT + 0.5) * 2)) * DST_SCALE_CIRCLE_COUNT;
         const zoomRatio = basicZoomRatio / maxDst;
-        const scaleStep = maxDst / DST_SCALE_CIRCLE_COUNT;
+        const scaleStep = (maxDst / DST_SCALE_CIRCLE_COUNT) / vnode.state.zoom;
         const scaleTexts = [];
         for(let i=1; i<=DST_SCALE_CIRCLE_COUNT; ++i) {
             scaleTexts.push({
@@ -244,9 +247,12 @@ const DstChart = {
                     Setting.setDstChartShowFrom(!Setting.getDstChartShowFrom());
                 }
             }, i18next.t("btnFrom")),
-            m("button.button.is-small.zoom-button", {
+            m("button.button.zoom-button", {
                 onclick: e => {
-
+                    vnode.state.zoom *= 2;
+                    if(vnode.state.zoom > DST_MAX_ZOOM) {
+                        vnode.state.zoom = DST_MIN_ZOOM;
+                    }
                 }
             }, m("i.fas.fa-search-plus")),
         ]);
