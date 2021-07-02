@@ -46,7 +46,7 @@ class SondeDataItem {
         let value = this.windHeading;
         switch(Setting.getMagDeclination()) {
             case Direction.MagDeclinationEnum.MAG:
-                value += this.magDeclination;
+                value -= this.magDeclination;
                 break;
         }
         if(Setting.getWindDirection() == Direction.DirectionEnum.FROM) {
@@ -63,7 +63,7 @@ class SondeDataItem {
         let value = this.windHeading;
         switch(Setting.getMagDeclination()) {
             case Direction.MagDeclinationEnum.MAG:
-                value += this.magDeclination;
+                value -= this.magDeclination;
                 break;
         }
         return value;
