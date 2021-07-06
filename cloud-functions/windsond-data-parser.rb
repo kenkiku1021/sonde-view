@@ -148,7 +148,7 @@ class WindsondDataParser
         if @windheading_col
             data[:windheading] = line_values[@windheading_col].to_f
             if @windheading_type == :mag_deg
-                data[:windheading] -= @mag_dec
+                data[:windheading] += @mag_dec
             end
             if @wind_from_to_type == :from
                 data[:windheading] -= 180

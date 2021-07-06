@@ -164,6 +164,7 @@ end
 def load_data(data)
   errors = []
 
+  data[:updated_at] = Time.now 
   begin
     lat = to_f(data[:lat])
     if lat < -90 || lat > 90
