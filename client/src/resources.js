@@ -48,6 +48,7 @@ const i18nResources = {
             historyDate: "日付",
             noDownloadFiless: "ダウンロードファイルがありません。",
             updated: "更新",
+            finished: "終了",
         },
     },
     en: {
@@ -99,6 +100,7 @@ const i18nResources = {
             historyDate: "Date",
             noDownloadFiless: "Download file not exists.",
             updated: "Update",
+            finished: "Finished",
         },
     },
 }

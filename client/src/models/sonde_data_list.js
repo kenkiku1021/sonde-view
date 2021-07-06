@@ -106,8 +106,18 @@ class SondeDataList {
             return "";
         }
         else {
-            const data = this._list[this._list.length - 1];
+            const data = this._list[0];
             return data.updatedAt ? agh.sprintf("%02d:%02d", data.updatedAt.getHours(), data.updatedAt.getMinutes()) : "";
+        }
+    }
+
+    isFinished() {
+        if(this._list.length === 0) {
+            return false;
+        }
+        else {
+            const data = this._list[0];
+            return data.finished;
         }
     }
 }

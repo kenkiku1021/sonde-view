@@ -47,6 +47,12 @@ class SondeDataItem {
         switch(Setting.getMagDeclination()) {
             case Direction.MagDeclinationEnum.MAG:
                 value -= this.magDeclination;
+                if(value < 0) {
+                    value += 360;
+                }
+                else if(value >= 360) {
+                    value -= 360;
+                }
                 break;
         }
         if(Setting.getWindDirection() == Direction.DirectionEnum.FROM) {
@@ -112,6 +118,7 @@ class SondeData {
         this.measuredAt = data.measured_at ? data.measured_at.toDate() : this.measuredAt;
         this.updatedAt = data.updated_at ? data.updated_at.toDate() : this.updatedAt;
         this._records = data.values.map(v => new SondeDataItem(v, this.magDeclination));
+        this.finished = data["finished"] ? data["finished"] : false
     }
 
     getID() {

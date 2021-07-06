@@ -16,6 +16,7 @@ const SPD_COLOR_SCALE_WIDTH = 10;
 const SPD_COLOR_SCALE_X_OFFSET = 5;
 const DST_MIN_ZOOM = 1;
 const DST_MAX_ZOOM = 4;
+const AXIS_COUNT = 12;
 
 function getChartSize() {
     let size = 1344 / 2;
@@ -88,38 +89,22 @@ const BasicChartAxises = {
     view: vnode => {
         const w = vnode.attrs.width;
         const h = vnode.attrs.height;
-        return [
-            m(SvgLine, {
+        const x0 = w / 2.0;
+        const y0 = h / 2.0;
+        const r = Math.sqrt((w/2.0)*(w/2.0) + (h/2.0)*(h/2.0));
+        const axises = [];
+
+        for(let i=0; i<AXIS_COUNT; ++i) {
+            const theta = i * 2 * Math.PI / AXIS_COUNT;
+            const line = m(SvgLine, {
                 class: "axis",
-                from: [w/2, 0],
-                to: [w/2, h],
-            }),
-            m(SvgLine, {
-                class: "axis",
-                from: [0, h/2],
-                to: [w, h/2],
-            }),
-            m(SvgLine, {
-                class: "axis",
-                from: [0, h/2*(1.0 - Math.sin(Math.PI/6))],
-                to: [w, h/2*(1.0 + Math.sin(Math.PI/6))],
-            }),
-            m(SvgLine, {
-                class: "axis",
-                from: [w/2*(1.0 - Math.sin(Math.PI/6)), 0],
-                to: [w/2*(1.0 + Math.sin(Math.PI/6)), h],
-            }),
-            m(SvgLine, {
-                class: "axis",
-                from: [0, h/2*(1.0 + Math.sin(Math.PI/6))],
-                to: [w, h/2*(1.0 - Math.sin(Math.PI/6))],
-            }),
-            m(SvgLine, {
-                class: "axis",
-                from: [w/2*(1.0 + Math.sin(Math.PI/6)), 0],
-                to: [w/2*(1.0 - Math.sin(Math.PI/6)), h],
-            }),
-        ];
+                from: [x0, y0],
+                to: [x0 + (r * Math.cos(theta)), y0 + (r * Math.sin(theta))],
+            });
+            axises.push(line);
+        }
+
+        return axises;
     }
 };
 
@@ -208,8 +193,8 @@ const DstChart = {
                     x: 10,
                     y: 20,
                 }, [
-                    i18next.t("updated"),
-                    vnode.attrs.dataList.lastUpdatedAt()
+                    vnode.attrs.dataList.isFinished() ? i18next.t("finished") : i18next.t("updated"),
+                    vnode.attrs.dataList.lastUpdatedAt(),
                 ]),
                 vnode.attrs.dataList.list().map((data, dataIdx) => {
                     const isLatest = dataIdx === 0;
@@ -358,7 +343,7 @@ const SpdChart = {
                     x: 10,
                     y: 20,
                 }, [
-                    i18next.t("updated"),
+                    vnode.attrs.data.finished ? i18next.t("finished") : i18next.t("updated"),
                     " ",
                     vnode.attrs.data.updatedAt ? agh.sprintf("%02d:%02d", vnode.attrs.data.updatedAt.getHours(), vnode.attrs.data.updatedAt.getMinutes()) : "",
                 ]),
