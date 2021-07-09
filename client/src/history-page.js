@@ -80,6 +80,9 @@ const HistoryCardView = {
                             }, [
                                 item.getTime(),
                             ]),
+                            m("a.map[target=_blank]", {
+                                href: item.mapUrl(),
+                            }, [m("span.icon", m(UI.MapIcon)), " ", i18next.t("map")]),
                         ]);
                     }),
                 ]),

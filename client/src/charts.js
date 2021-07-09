@@ -4,6 +4,7 @@ import Setting from "./models/setting";
 import Unit from "./models/unit";
 import Direction from "./models/direction";
 import i18next from "i18next";
+import UI from "./ui";
 
 const DEFAULT_CHART_WIDTH = 350;
 const DEFAULT_CHART_HEIGHT = 350;
@@ -194,6 +195,7 @@ const DstChart = {
                     y: 20,
                 }, [
                     vnode.attrs.dataList.isFinished() ? i18next.t("finished") : i18next.t("updated"),
+                    " ",
                     vnode.attrs.dataList.lastUpdatedAt(),
                 ]),
                 vnode.attrs.dataList.list().map((data, dataIdx) => {
@@ -241,6 +243,7 @@ const DstChart = {
                 }
             }, m("i.fas.fa-search-plus")),
             m(".zoom-label", agh.sprintf("×%.1f", vnode.state.zoom)),
+            vnode.attrs.dataList.selectedData() ? m(ChartMapLinkView, {data: vnode.attrs.dataList.selectedData()}) : "",
         ]);
     },
 
@@ -395,7 +398,7 @@ const SpdChart = {
                     Setting.setSpdChartShowFrom(!Setting.getSpdChartShowFrom());
                 }
             }, Setting.getSpdChartShowFrom() ? i18next.t("btnFrom") : i18next.t("btnTo")),
-
+            m(ChartMapLinkView, {data: vnode.attrs.data}),
         ]);
     },
 
@@ -427,5 +430,19 @@ const SpdChart = {
         ]);
     },
 };
+
+const ChartMapLinkView = {
+    view: vnode => {
+        return m(".map-link", [
+            m("a[target=_default]", {
+                href: vnode.attrs.data.mapUrl(),
+            }, [
+                m("span.icon", m(UI.MapIcon)),
+                " ",
+                i18next.t("map")
+            ]),
+        ]);
+    },
+}
 
 export {DstChart, SpdChart};

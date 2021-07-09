@@ -181,6 +181,9 @@ class SondeData {
         }
     }
 
+    mapUrl() {
+        return `https://www.google.com/maps/search/?api=1&query=${this.lat}%2C${this.lng}`;
+    }
 }
 
 export {SondeData, SondeDataItem};

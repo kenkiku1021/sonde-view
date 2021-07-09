@@ -189,6 +189,11 @@ $color10: gainsboro;
         text-align: right;
         color: #777;
     }
+    .map-link {
+        position: absolute;
+        top: 25px;
+        left: 10px;
+    }
 }
 
 .chart {
@@ -436,7 +441,12 @@ $color10: gainsboro;
 
         a {
             display: block;
-            flex-grow: 10;
+            flex-grow: 4;
+        }
+
+        a.map {
+            text-align: right;
+            flex-grow: 1;
         }
     }
 

@@ -49,6 +49,7 @@ const i18nResources = {
             noDownloadFiless: "ダウンロードファイルがありません。",
             updated: "更新",
             finished: "終了",
+            map: "Map",
         },
     },
     en: {
@@ -101,6 +102,7 @@ const i18nResources = {
             noDownloadFiless: "Download file not exists.",
             updated: "Update",
             finished: "Finished",
+            map: "Map",
         },
     },
 }

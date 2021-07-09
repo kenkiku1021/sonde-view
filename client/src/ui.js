@@ -101,6 +101,12 @@ const UI = {
             return m("i.fas.fa-angle-down[aria-hidden=true]");
         }
     },
+
+    MapIcon: {
+        view: vnode => {
+            return m("i.fas.fa-map-marked-alt[aria-hiden=true]");
+        }
+    },
 };
 
 export default UI;
