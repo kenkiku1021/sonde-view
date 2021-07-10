@@ -434,7 +434,7 @@ const SpdChart = {
 const ChartMapLinkView = {
     view: vnode => {
         return m(".map-link", [
-            m("a[target=_default]", {
+            m("a[target=_blank]", {
                 href: vnode.attrs.data.mapUrl(),
             }, [
                 m("span.icon", m(UI.MapIcon)),
