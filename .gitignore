@@ -8,6 +8,7 @@ node_modules
 /client/firebase.json
 /client/firestore.indexes.json
 /client/firestore.rules
+/client/public/dist
 
 # Logs
 logs

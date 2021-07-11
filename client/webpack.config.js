@@ -13,13 +13,18 @@ module.exports = {
   mode: MODE,
 
   // メインとなるJavaScriptファイル（エントリーポイント）
-  entry: "./src/index.js",
+  entry: {
+    main: "./src/index.js",
+    admin: "./src/admin.js",
+    'main.css': "./src/style.scss",
+    'admin.css': "./src/admin.scss"
+  },
   // ファイルの出力設定
   output: {
     //  出力ファイルのディレクトリ名
     path: `${__dirname}/public/dist`,
     // 出力ファイル名
-    filename: "main.js",
+    filename: "[name].js",
   },
 
   module: {
@@ -63,7 +68,7 @@ module.exports = {
     // CSSファイルを外だしにするプラグイン
     new MiniCssExtractPlugin({
       // ファイル名を設定します
-      filename: "style.css",
+      filename: "[name]",
     }),
   ],
 };

@@ -1,9 +1,10 @@
 import m from "mithril";
 import Setting from "./setting";
-import {SondeData, SondeDataItem} from "./sonde_data";
+import { SondeData, SondeDataItem } from "./sonde_data";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import agh from "agh.sprintf";
+import i18next from "i18next";
 
 const SONDEVIEW_COLLECTION = "sondeview"; // collection name in Firebase
 const HISTORY_COUNT = 100;
@@ -27,7 +28,7 @@ class History {
 
     fetch() {
         let dateFrom = this._dateFrom;
-        if(this._dateFrom == "") {
+        if (this._dateFrom == "") {
             dateFrom = new Date();
         }
         this._dateList = [];
@@ -37,7 +38,7 @@ class History {
             querySnapshot.forEach(doc => {
                 const newData = new SondeData(doc.id, doc.data());
                 const dateText = newData.getDate();
-                if(dateText != currentDateText) {
+                if (dateText != currentDateText) {
                     currentDateText = dateText;
                     currentData = {
                         date: dateText,
@@ -50,7 +51,7 @@ class History {
             m.redraw();
         }).catch(err => {
             console.log("Cannot fetch sonde data history", err);
-            m.route.set("/error/:err", {err: "errMsgInsufficientPrivilege"});
+            m.route.set("/error/:err", { err: "errMsgInsufficientPrivilege" });
         });
     }
 
@@ -63,13 +64,22 @@ class History {
     }
 
     setDateFrom(value) {
-        if(value.match(/^(\d{4})\-(\d{2})\-(\d{2})$/)) {
+        if (value.match(/^(\d{4})\-(\d{2})\-(\d{2})$/)) {
             const year = Number(RegExp.$1);
             const month = Number(RegExp.$2) - 1;
             const day = Number(RegExp.$3);
             this._dateFrom = new Date(year, month, day, 23, 59, 59);
             this.fetch();
         }
+    }
+
+    delete(id) {
+        this.sondeDataRef.doc(id).delete().then(() => {
+            this.fetch();
+        }).catch(err => {
+            console.log(err);
+            alert(i18next.t("dataUpdateError") + err);
+        });
     }
 }
 

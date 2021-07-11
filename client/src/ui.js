@@ -33,7 +33,9 @@ const UI = {
 
     NavBar: {
         view: vnode => {
-            return m("nav.navbar.is-primary", [
+            return m("nav.navbar", {
+                class: vnode.attrs.class ? vnode.attrs.class : "is-primary",
+            }, [
                 m(".navbar-brand", [
                     m("a", {
                         onclick: e => {
