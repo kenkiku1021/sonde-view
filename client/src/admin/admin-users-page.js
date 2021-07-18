@@ -130,7 +130,7 @@ const UsersTableView = {
             m("td", [
               m("button.button.is-primary.is-small.mr-2[type=button]", {
                 onclick: e => {
-                  vnode.attrs.users.update(user);
+                  vnode.attrs.users.update(user, true);
                 }
               }, i18next.t("updateUser")),
               m("button.button.is-danger.is-small[type=button]", {

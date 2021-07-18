@@ -44,6 +44,7 @@ class AdminUsers {
       name: name,
       memo: memo,
     }).then(() => {
+      alert(i18next.t("userAppended"));
       this.fetch();
     }).catch(err => {
       console.log(err);
@@ -51,13 +52,16 @@ class AdminUsers {
     });
   }
 
-  update(user) {
+  update(user, withAlert=false) {
     return this.usersRef.doc(user.email).update({
       allow: user.allow,
       admin: user.admin,
       name: user.name,
       memo: user.memo,
     }).then(() => {
+      if(withAlert) {
+        alert(i18next.t("userUpdated"));
+      }
       this.fetch();
     }).catch(err => {
       console.log(err);
