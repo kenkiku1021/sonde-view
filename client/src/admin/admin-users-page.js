@@ -9,26 +9,64 @@ const NewUserView = {
   },
 
   view: vnode => {
-    return m(".field.has-addons", [
-      m(".control", [
-        m("a.button.is-static", i18next.t("newUser")),
+    return m(".columns", [
+      m(".column.is-narrow", [
+        m(".field.has-addons", [
+          m(".control", [
+            m("a.button.is-static", i18next.t("newUser")),
+          ]),
+          m(".control", [
+            m("input.input[type=email]", {
+              value: vnode.state.newUser,
+              oninput: e => {
+                vnode.state.newUser = e.target.value;
+              },
+            }),
+          ]),
+        ]),   
       ]),
-      m(".control", [
-        m("input.input[type=email]", {
-          value: vnode.state.newUser,
-          oninput: e => {
-            vnode.state.newUser = e.target.value;
-          },
-        }),
+      m(".column.is-narrow", [
+        m(".field.has-addons", [
+          m(".control", [
+            m("a.button.is-static", i18next.t("userName")),
+          ]),
+          m(".control", [
+            m("input.input[type=text]", {
+              value: vnode.state.newName,
+              oninput: e => {
+                vnode.state.newName = e.target.value;
+              },
+            }),
+          ]),
+        ]),
       ]),
-      m(".control", [
-        m("button.button.is-info", {
-          onclick: e => {
-            vnode.attrs.users.append(vnode.state.newUser).then(() => {
-              vnode.state.newUser = "";
-            });
-          }
-        }, i18next.t("appendNewUser")),
+      m(".column.is-narrow", [
+        m(".field.has-addons", [
+          m(".control", [
+            m("a.button.is-static", i18next.t("userMemo")),
+          ]),
+          m(".control", [
+            m("input.input[type=text]", {
+              value: vnode.state.newMemo,
+              oninput: e => {
+                vnode.state.newMemo = e.target.value;
+              },
+            }),
+          ]),
+        ]),
+      ]),
+      m(".column.is-narrpw", [
+        m(".control", [
+          m("button.button.is-info", {
+            onclick: e => {
+              vnode.attrs.users.append(vnode.state.newUser, vnode.state.newName, vnode.state.newMemo).then(() => {
+                vnode.state.newUser = "";
+                vnode.state.newName = "";
+                vnode.state.newMemo = "";
+              });
+            }
+          }, i18next.t("appendNewUser")),
+        ]),
       ]),
     ]);
   },
@@ -42,6 +80,8 @@ const UsersTableView = {
           m("th", i18next.t("email")),
           m("th", i18next.t("allow")),
           m("th", i18next.t("admin")),
+          m("th", i18next.t("userName")),
+          m("th", i18next.t("userMemo")),
           m("th", ""),
         ]),
       ]),
@@ -72,6 +112,27 @@ const UsersTableView = {
               ]),
             ]),
             m("td", [
+              m("input.input[type=text]", {
+                value: user.name,
+                oninput: e => {
+                  user.name = e.target.value;
+                }
+              }),
+            ]),
+            m("td", [
+              m("input.input[type=text]", {
+                value: user.memo,
+                oninput: e => {
+                  user.memo = e.target.value;
+                }
+              }),
+            ]),
+            m("td", [
+              m("button.button.is-primary.is-small.mr-2[type=button]", {
+                onclick: e => {
+                  vnode.attrs.users.update(user);
+                }
+              }, i18next.t("updateUser")),
               m("button.button.is-danger.is-small[type=button]", {
                 onclick: e => {
                   if(confirm(i18next.t("deleteUserConfirmation") + user.email)) {

@@ -10,7 +10,6 @@ class AdminUsers {
     this.db = firebase.firestore();
     this.usersRef = this.db.collection(USERS_COLLECTION);
     this._list = [];
-    this.newUser = "";
   }
 
   fetch() {
@@ -23,6 +22,8 @@ class AdminUsers {
           email: doc.id,
           allow: !!data.allow,
           admin: !!data.admin,
+          name: data.name ? data.name : "",
+          memo: data.memo ? data.memo : "",
         });
       });
       m.redraw();
@@ -36,10 +37,12 @@ class AdminUsers {
     return this._list;
   }
 
-  append(email) {
+  append(email, name, memo) {
     return this.usersRef.doc(email).set({
       allow: true,
       admin: false,
+      name: name,
+      memo: memo,
     }).then(() => {
       this.fetch();
     }).catch(err => {
@@ -49,9 +52,11 @@ class AdminUsers {
   }
 
   update(user) {
-    return this.usersRef.doc(user.email).set({
+    return this.usersRef.doc(user.email).update({
       allow: user.allow,
       admin: user.admin,
+      name: user.name,
+      memo: user.memo,
     }).then(() => {
       this.fetch();
     }).catch(err => {
