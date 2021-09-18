@@ -1,7 +1,7 @@
 const i18nResources = {
   ja: {
     translation: {
-      appName: "WindView Upload Data",
+      appName: "WindView Upload",
       menuSignout: "サインアウト",
       uploadPrivilegeError: "アップロードページへのアクセス権がありません。",
       measuredAt: "測定日時",
@@ -17,7 +17,7 @@ const i18nResources = {
 
   en: {
     translation: {
-      appName: "WindView Upload Data",
+      appName: "WindView Upload",
       menuSignout: "SignOut",
       uploadPrivilegeError: "You don't have privilege access to upload page.",
       measuredAt: "Measured At",
