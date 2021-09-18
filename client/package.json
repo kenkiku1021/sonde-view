@@ -17,7 +17,7 @@
     "@babel/preset-env": "^7.13.12",
     "agh.sprintf": "^0.0.11",
     "babel-loader": "^8.2.2",
-    "bulma": "^0.9.2",
+    "bulma": "^0.9.3",
     "css-loader": "^5.2.0",
     "firebase": "^8.3.1",
     "firebaseui": "^4.8.1",
