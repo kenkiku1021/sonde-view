@@ -22,6 +22,7 @@ class AdminUsers {
           email: doc.id,
           allow: !!data.allow,
           admin: !!data.admin,
+          upload: !!data.upload,
           name: data.name ? data.name : "",
           memo: data.memo ? data.memo : "",
         });
@@ -41,6 +42,7 @@ class AdminUsers {
     return this.usersRef.doc(email).set({
       allow: true,
       admin: false,
+      upload: false,
       name: name,
       memo: memo,
     }).then(() => {
@@ -56,6 +58,7 @@ class AdminUsers {
     return this.usersRef.doc(user.email).update({
       allow: user.allow,
       admin: user.admin,
+      upload: user.upload,
       name: user.name,
       memo: user.memo,
     }).then(() => {

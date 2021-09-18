@@ -80,6 +80,7 @@ const UsersTableView = {
           m("th", i18next.t("email")),
           m("th", i18next.t("allow")),
           m("th", i18next.t("admin")),
+          m("th", i18next.t("upload")),
           m("th", i18next.t("userName")),
           m("th", i18next.t("userMemo")),
           m("th", ""),
@@ -106,6 +107,17 @@ const UsersTableView = {
                   checked: user.admin,
                   onclick: e => {
                     user.admin = e.target.checked;
+                    vnode.attrs.users.update(user);
+                  },
+                }),
+              ]),
+            ]),
+            m("td.check", [
+              m("label.checkbox", [
+                m("input[type=checkbox]", {
+                  checked: user.upload,
+                  onclick: e => {
+                    user.upload = e.target.checked;
                     vnode.attrs.users.update(user);
                   },
                 }),
