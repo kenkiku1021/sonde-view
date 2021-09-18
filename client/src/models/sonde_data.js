@@ -108,6 +108,7 @@ class SondeData {
         this.magDeclination = 0;
         this.measuredAt = new Date();
         this.updatedAt = null;
+        this.groundMSL = 0;
         this._records = [];
     }
 
@@ -119,6 +120,31 @@ class SondeData {
         this.updatedAt = data.updated_at ? data.updated_at.toDate() : this.updatedAt;
         this._records = data.values.map(v => new SondeDataItem(v, this.magDeclination));
         this.finished = data["finished"] ? data["finished"] : false
+    }
+
+    setLat(value) {
+        value = Number(value);
+        if(value >= -90 && value <= 90) {
+            this.lat = value;
+        }
+        console.log(this.measuredAt)
+    }
+
+    setLng(value) {
+        value = Number(value);
+        if(value >= -180 && value <= 180) {
+            this.lng = value;
+        }
+    }
+
+    setGroundMSL(value) {
+        value = Number(value);
+        this.groundMSL = value;
+    }
+
+    setMagDeclination(value) {
+        value = Number(value);
+        this.magDeclination = value;
     }
 
     getID() {

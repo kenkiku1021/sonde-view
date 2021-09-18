@@ -16,8 +16,10 @@ module.exports = {
   entry: {
     main: "./src/index.js",
     admin: "./src/admin.js",
+    upload: "./src/upload.js",
     'main.css': "./src/style.scss",
-    'admin.css': "./src/admin.scss"
+    'admin.css': "./src/admin.scss",
+    'upload.css': "./src/upload.scss",
   },
   // ファイルの出力設定
   output: {
