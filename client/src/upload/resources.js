@@ -12,6 +12,15 @@ const i18nResources = {
       measuredData: "計測データ",
       uploadBtn: "アップロード",
       preview: "プレビュー",
+      presetLocations: "観測地",
+      msl: "MSL",
+      agl: "AGL",
+      tblWindDirectionFrom: "From",
+      tblWindSpeed: "Spd",
+      tblMagDeclinationMag: "Mag",
+      tblMagDeclinationTrue: "True",
+      dataUpdateError: "データの更新に失敗しました。",
+      dataUpdateSuccessed: "データを更新しました。",
     }
   },
 
@@ -28,6 +37,15 @@ const i18nResources = {
       measuredData: "Measured Data",
       uploadBtn: "Upload",
       preview: "Preview",
+      presetLocations: "Locations",
+      agl: "AGL",
+      msl: "MSL",
+      tblWindDirectionFrom: "From",
+      tblWindSpeed: "Spd",
+      tblMagDeclinationMag: "Mag",
+      tblMagDeclinationTrue: "True",
+      dataUpdateError: "Cannot update data",
+      dataUpdateSuccessed: "Data updated",
     }
   }
 };

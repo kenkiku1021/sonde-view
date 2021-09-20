@@ -69,6 +69,31 @@ const UploadUI = {
       ]);
     }
   },
+
+  Select: {
+    view: vnode => {
+      return m(".field", [
+        m("label", {
+          for: vnode.attrs.id,
+        }, vnode.attrs.label),
+        m(".control", [
+          m(".select", [
+            m("select", {
+              id: vnode.attrs.id,
+              onchange: vnode.attrs.onchange,
+            }, [
+              vnode.attrs.values.map(value => {
+                return m("option", {
+                  value: value[0],
+                  selected: vnode.attrs.value == value[0],
+                }, value[1]);
+              }),
+            ]),  
+          ]),
+        ]),
+      ]);
+    }
+  },
 };
 
 export default UploadUI;

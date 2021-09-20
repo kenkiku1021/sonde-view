@@ -36,6 +36,7 @@ class History {
             let currentDateText;
             let currentData;
             querySnapshot.forEach(doc => {
+                console.log(doc.id)
                 const newData = new SondeData(doc.id, doc.data());
                 const dateText = newData.getDate();
                 if (dateText != currentDateText) {
@@ -74,7 +75,7 @@ class History {
     }
 
     delete(id) {
-        this.sondeDataRef.doc(id).delete().then(() => {
+        this.sondeDataRef.doc(String(id)).delete().then(() => {
             this.fetch();
         }).catch(err => {
             console.log(err);

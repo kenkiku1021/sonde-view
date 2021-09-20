@@ -3,7 +3,11 @@ import Setting from "./setting";
 import Unit from "./unit";
 import Direction from "./direction";
 import agh from "agh.sprintf";
+import firebase from "firebase/app";
+import "firebase/firestore";
+import i18next from "i18next";
 
+const SONDE_DATA_COLLECTION = "sondeview";
 class SondeDataItem {
     /*
         Units:
@@ -65,6 +69,28 @@ class SondeDataItem {
         return value;
     }
 
+    getWindMagFrom() {
+        let value = this.windHeading - this.magDeclination - 180;
+        if(value < 0) {
+            value += 360;
+        }
+        else if(value >= 360) {
+            value -= 360;
+        }
+        return value;
+    }
+
+    getWindTrueFrom() {
+        let value = this.windHeading - 180;
+        if(value < 0) {
+            value += 360;
+        }
+        else if(value >= 360) {
+            value -= 360;
+        }
+        return value;
+    }
+
     getWindHeadingForChart() {
         let value = this.windHeading;
         switch(Setting.getMagDeclination()) {
@@ -95,8 +121,10 @@ class SondeDataItem {
 
 class SondeData {
     constructor(id, data) {
-        this.id = id;
         this.init();
+        if(id) {
+            this.id = id;
+        }
         if(data) {
             this.setData(data);
         }
@@ -107,6 +135,7 @@ class SondeData {
         this.lng = 0;
         this.magDeclination = 0;
         this.measuredAt = new Date();
+        this.id = Math.floor(this.measuredAt.getTime() / 1000);
         this.updatedAt = null;
         this.groundMSL = 0;
         this._records = [];
@@ -122,12 +151,20 @@ class SondeData {
         this.finished = data["finished"] ? data["finished"] : false
     }
 
+    setMeasuredAtAsString(value) {
+        try {
+            this.measuredAt.setTime(Date.parse(value));
+            this.id = Math.floor(this.measuredAt.getTime() / 1000);
+        }
+        catch(err) {
+        }
+    }
+
     setLat(value) {
         value = Number(value);
         if(value >= -90 && value <= 90) {
             this.lat = value;
         }
-        console.log(this.measuredAt)
     }
 
     setLng(value) {
@@ -209,6 +246,58 @@ class SondeData {
 
     mapUrl() {
         return `https://www.google.com/maps/search/?api=1&query=${this.lat}%2C${this.lng}`;
+    }
+
+    parseDataText(txt) {
+        if(!txt) {
+            return;
+        }
+        const lines = txt.split("\n");
+        this._records = [];
+        for(let line of lines) {
+            if(line.match(/^([\d\.]+)m\s+([\d+\.]+)°\s+([\d\.]+)kt/)) {
+                const agl = Number(RegExp.$1);
+                let windHeading = Number(RegExp.$2) - 180;
+                if(windHeading < 0) {
+                    windHeading += 360;
+                }
+                const windSpeed = Unit.conv_kt_to_m_s(Number(RegExp.$3));
+                const data = {
+                    altitude: this.groundMSL + agl,
+                    height: agl,
+                    windheading: windHeading,
+                    windspeed: windSpeed,
+                };
+                this._records.push(new SondeDataItem(data, this.magDeclination));
+            }
+        }
+    }
+
+    update() {
+        const db = firebase.firestore();
+        const sondeDataRef = db.collection(SONDE_DATA_COLLECTION);
+        const now = new Date();
+        sondeDataRef.doc(String(this.id)).set({
+            lat: this.lat,
+            lng: this.lng,
+            mag_dec: this.magDeclination,
+            measured_at: this.measuredAt,
+            updated_at: now,
+            values: this._records.map(data => {
+                return {
+                    altitude: data.altitude,
+                    height: data.height,
+                    temperature: data.temperature,
+                    windheading: data.windHeading,
+                    windspeed: data.windSpeed,
+                };
+            }),
+        }).then(() => {
+            console.log("Data updated");
+        }).catch(err => {
+            alert(i18next.t("dataUpdateError"));
+            console.log(err);
+        });
     }
 }
 

@@ -23,6 +23,10 @@ const Unit = {
         return v * 3600.0 / 1000.0;
     },
 
+    conv_kt_to_m_s: v => {
+        return v / 1.9438;
+    },
+
     windspeedUnitText: u => {
         switch(u) {
             case Unit.WindspeedUnitEnum.M_PER_SEC:
