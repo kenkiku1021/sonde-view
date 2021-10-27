@@ -5,3 +5,8 @@ $modal-background-background-color: rgba(0, 0, 0, 0.5);;
 
 @import "~bulma/bulma";
 @import "firebaseui/dist/firebaseui.css";
+
+.footer {
+  margin-top: 2em;
+  background-color: lightgray;
+}
