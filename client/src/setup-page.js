@@ -209,6 +209,7 @@ const SetupPage = {
                     ]),
                 ]),
             ]),
+            m(UI.Footer),
         ];
 
     }

@@ -1,5 +1,6 @@
 import m from "mithril";
 import AdminUI from "./admin-ui";
+import UI from "../ui";
 import SondeDataList from "../models/sonde_data_list";
 import History from "../models/history";
 import i18next from 'i18next';
@@ -19,6 +20,7 @@ const AdminDataPage = {
           m(HistroyTableView, {history: vnode.state.history}),
         ]),
       ]),
+      m(UI.Footer),
     ];
   },
 };

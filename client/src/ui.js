@@ -109,6 +109,16 @@ const UI = {
             return m("i.fas.fa-map-marked-alt[aria-hiden=true]");
         }
     },
+
+    Footer: {
+        view: vnode => {
+            return m("footer.footer", [
+                m(".content.has-text-centered", [
+                    m("p", "Copyright © Kikuchi Ken"),
+                ]),
+            ]);
+        }
+    },
 };
 
 export default UI;

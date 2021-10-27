@@ -1,5 +1,6 @@
 import m from "mithril";
 import AdminUI from "./admin-ui";
+import UI from "../ui";
 import AdminUsers from "./models/admin-users";
 import i18next from 'i18next';
 
@@ -175,6 +176,7 @@ const AdminUsersPage = {
           m(UsersTableView, {users: vnode.state.users}),
         ]),
       ]),
+      m(UI.Footer),
     ];
   },
 };

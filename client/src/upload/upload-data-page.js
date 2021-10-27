@@ -1,6 +1,7 @@
 import m from "mithril";
 import i18next from 'i18next';
 import UploadUI from "./upload-ui";
+import UI from "../ui";
 import { SondeData } from "../models/sonde_data";
 import { toLocalTimeISOString } from "../time-lib";
 import Locations from "./models/locations";
@@ -156,6 +157,7 @@ const UploadDataPage = {
           ]),
         ]),
       ]),
+      m(UI.Footer),
     ];
   },
 };

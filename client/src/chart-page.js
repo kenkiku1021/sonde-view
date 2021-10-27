@@ -58,6 +58,7 @@ const ChartPage = {
           ] : "",
         ]),
       ]),
+      m(UI.Footer),
     ];
   },
 };

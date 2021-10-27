@@ -19,6 +19,7 @@ const DownloadPage = {
           ]),
         ]),
       ]),
+      m(UI.Footer),
     ];
   }
 };

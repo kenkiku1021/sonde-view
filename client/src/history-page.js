@@ -23,6 +23,7 @@ const HistoryPage = {
                     }),    
                 ]),
             ]),
+            m(UI.Footer),
         ];
 
     }

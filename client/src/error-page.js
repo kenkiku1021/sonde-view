@@ -16,6 +16,7 @@ const ErrorPage = {
                     ]),
                 ]),    
             ]),
+            m(UI.Footer),
         ];
     }
 };
