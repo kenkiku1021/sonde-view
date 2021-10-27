@@ -247,6 +247,7 @@ class SettingData {
 
     setSortOderDescend() {
         this.sortOrder = SORT_ORDER_DESC;
+        this.save();
     }
 
     getCharSize() {
