@@ -15,23 +15,23 @@ const TABLE_BACKGROUND_COLOR_BY_DIRECTION = 2;
 
 class SettingData {
     constructor() {
-        this.mslAsMeter = true,
-        this.mslAsFt = false,
+        this.mslAsMeter = false,
+        this.mslAsFt = true,
         this.aglAsMeter = true,
         this.aglAsFt = false,
         this.windSpeedAsMeterPerSec = true;
-        this.windSpeedAsKmPerHour = false;
+        this.windSpeedAsKmPerHour = true;
         this.windSpeedAsKt = false;
         this.windDirection = Direction.DirectionEnum.TO;
         this.magDeclination = Direction.MagDeclinationEnum.MAG;
-        this.temperatureUnit = Unit.TemperatureUnitEnum.CELSIUS;
+        this.temperatureUnit = Unit.TemperatureUnitEnum.NONE;
         this.chartMode = DST_CHART_MODE; // Dst Chart
         this.dstChartShowFrom = false;
         this.spdChartShowFrom = false;
         this.dataListDuration = 6; // 6hours
         this.sortOrder = SORT_ORDER_ASC;
         this.charSize = "M";
-        this.tableBackgroundColor = TABLE_BACKGROUND_COLOR_NONE;
+        this.tableBackgroundColor = TABLE_BACKGROUND_COLOR_BY_DIRECTION;
         this.load();
     }
 
