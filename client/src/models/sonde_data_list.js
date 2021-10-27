@@ -44,12 +44,11 @@ class SondeDataList {
                     date = newData.measuredAt;
                 }
 
-                if(newData.id === prevSelectedId) {
-                    this._selectedData = newData;
+                if(date.getTime() - newData.measuredAt.getTime() <= duration) {
                     this._list.push(newData);
-                }
-                else if(date.getTime() - newData.measuredAt.getTime() <= duration) {
-                    this._list.push(newData);
+                    if(newData.id === prevSelectedId) {
+                        this._selectedData = newData;
+                    }
                 }
             });
             if(!this._selectedData && this._list.length > 0) {
