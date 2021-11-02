@@ -12,7 +12,7 @@ class Locations {
   }
 
   fetch() {
-    let query = this.locationsRef;
+    let query = this.locationsRef.where("disabled", "!=", true);
     query.get().then(querySnapshot => {
       this._list = [
         {
@@ -30,6 +30,19 @@ class Locations {
           msl: data.msl,
           mag: data.mag,
         });
+      });
+      this._list.sort((a, b) => {
+        const idA = String(a.id).toUpperCase();
+        const idB = String(b.id).toUpperCase();
+        if(idA < idB) {
+          return -1;
+        }
+        else if(idA > idB) {
+          return 1;
+        }
+        else {
+          return 0;
+        }
       });
       m.redraw();
     }).catch(err => {
