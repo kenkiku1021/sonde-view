@@ -7,6 +7,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import { i18nResources } from "./admin/resources";
 import AdminUsersPage from "./admin/admin-users-page";
 import AdminDataPage from  "./admin/admin-data-page";
+import AdminLocationsPage from "./admin/admin-locations-page";
 
 
 i18next.use(LanguageDetector).init({
@@ -64,6 +65,7 @@ function startApp() {
   m.route(root, "/users", {
     "/users": AdminUsersPage,
     "/data": AdminDataPage,
+    "/locations": AdminLocationsPage,
   });
 
   window.onresize = e => {

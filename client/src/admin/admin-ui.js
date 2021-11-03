@@ -37,6 +37,7 @@ const AdminUI = {
           m(".navbar-start", [
             m(UI.NavBarItem, { path: "/users" }, i18next.t("menuUsers")),
             m(UI.NavBarItem, { path: "/data" }, i18next.t("menuData")),
+            m(UI.NavBarItem, { path: "/locations"}, i18next.t("menuLocations")),
             m(UI.NavBarSignOutItem),
           ])
         ])
