@@ -46,7 +46,7 @@ const i18nResources = {
       newLocationLat: "緯度",
       newLocationLng: "経度",
       newLocationMag: "偏角",
-      newLocationMsl: "MSL",
+      newLocationMsl: "MSL[m]",
     }
   },
 
@@ -97,7 +97,7 @@ const i18nResources = {
       newLocationLat: "Latitude",
       newLocationLng: "Longitude",
       newLocationMag: "Mag Dec",
-      newLocationMsl: "MSL",
+      newLocationMsl: "MSL[m]",
     }
   }
 };
