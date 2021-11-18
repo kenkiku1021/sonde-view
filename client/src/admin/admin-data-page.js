@@ -4,10 +4,12 @@ import UI from "../ui";
 import SondeDataList from "../models/sonde_data_list";
 import History from "../models/history";
 import i18next from 'i18next';
+import SystemSetting from "../models/system_setting";
 
 const AdminDataPage = {
   oninit: vnode => {
     vnode.state.history = new History();
+    vnode.state.history.setAdminMode(true);
     vnode.state.history.fetch();
   },
 
@@ -26,12 +28,21 @@ const AdminDataPage = {
 };
 
 const HistroyTableView = {
+  oninit: async (vnode) => {
+    vnode.state.systemSetting = new SystemSetting();
+    vnode.state.systemSetting.getDisabledSondeDataIdList();
+  },
+
+  onupdate: vnode => {
+  },
+
   view: vnode => {
     return m("table.table", [
       m("thead", [
         m("tr", [
           m("th[colspan=2]", i18next.t("dataDateTime")),
           m("th", ""),
+          m("th", i18next.t("disabledData")),
         ]),
       ]),
       m("tbody", [
@@ -48,6 +59,21 @@ const HistroyTableView = {
                     }
                   }
                 }, i18next.t("deleteData")),
+              ]),
+              m("td", [
+                m("label.checkbox", [
+                  m("input[type=checkbox]", {
+                    checked: vnode.state.systemSetting.isDisabledSondeDataId(data.id),
+                    onclick: e => {
+                      if(e.target.checked) {
+                        vnode.state.systemSetting.addDisabledSondeDataId(data.id);
+                      }
+                      else {
+                        vnode.state.systemSetting.removeDisabledSondeDataId(data.id);
+                      }
+                    }
+                  }),
+                ]),
               ]),
             ]);
           });

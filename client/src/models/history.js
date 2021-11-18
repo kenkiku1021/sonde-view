@@ -5,6 +5,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import agh from "agh.sprintf";
 import i18next from "i18next";
+import SystemSetting from "./system_setting";
 
 const SONDEVIEW_COLLECTION = "sondeview"; // collection name in Firebase
 const HISTORY_COUNT = 100;
@@ -24,6 +25,13 @@ class History {
         this.db = firebase.firestore();
         this.sondeDataRef = this.db.collection(SONDEVIEW_COLLECTION);
         this._dateList = [];
+        this.systemSetting = new SystemSetting();
+        this.systemSetting.getDisabledSondeDataIdList();
+        this.adminMode = false;
+    }
+
+    setAdminMode(value) {
+        this.adminMode = (value == true);
     }
 
     fetch() {
@@ -36,18 +44,20 @@ class History {
             let currentDateText;
             let currentData;
             querySnapshot.forEach(doc => {
-                console.log(doc.id)
-                const newData = new SondeData(doc.id, doc.data());
-                const dateText = newData.getDate();
-                if (dateText != currentDateText) {
-                    currentDateText = dateText;
-                    currentData = {
-                        date: dateText,
-                        list: [],
-                    };
-                    this._dateList.push(currentData);
+                //console.log(doc.id)
+                if(this.adminMode || !this.systemSetting.isDisabledSondeDataId(doc.id)) {
+                    const newData = new SondeData(doc.id, doc.data());
+                    const dateText = newData.getDate();
+                    if (dateText != currentDateText) {
+                        currentDateText = dateText;
+                        currentData = {
+                            date: dateText,
+                            list: [],
+                        };
+                        this._dateList.push(currentData);
+                    }
+                    currentData.list.push(newData);    
                 }
-                currentData.list.push(newData);
             });
             m.redraw();
         }).catch(err => {

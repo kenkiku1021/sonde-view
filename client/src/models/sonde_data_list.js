@@ -4,6 +4,7 @@ import {SondeData, SondeDataItem} from "./sonde_data";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import agh from "agh.sprintf";
+import SystemSetting from "./system_setting";
 
 const SONDEVIEW_COLLECTION = "sondeview"; // collection name in Firebase
 const FETCH_COUNT = 10;
@@ -21,6 +22,8 @@ class SondeDataList {
         this._list = [];
         this._selectedData = null;
         this.lastFetchedAt = null;
+        this.systemSetting = new SystemSetting();
+        this.systemSetting.getDisabledSondeDataIdList();
     }
 
     fetch(date = null) {
@@ -44,7 +47,7 @@ class SondeDataList {
                     date = newData.measuredAt;
                 }
 
-                if(date.getTime() - newData.measuredAt.getTime() <= duration) {
+                if(date.getTime() - newData.measuredAt.getTime() <= duration && !this.systemSetting.isDisabledSondeDataId(doc.id)) {
                     this._list.push(newData);
                     if(newData.id === prevSelectedId) {
                         this._selectedData = newData;
