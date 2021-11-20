@@ -19,49 +19,56 @@ class SondeDataList {
     constructor() {
         this.db = firebase.firestore();
         this.sondeDataRef = this.db.collection(SONDEVIEW_COLLECTION);
-        this._list = [];
+        this._list = []; // チャートに表示する計測データリスト
         this._selectedData = null;
         this.lastFetchedAt = null;
         this.systemSetting = new SystemSetting();
         this.systemSetting.getDisabledSondeDataIdList();
     }
 
+    // 計測データを取得する
     fetch(date = null) {
         if(!this.lastFetchedAt) {
             this.lastFetchedAt = new Date();
         }
         let query = this.sondeDataRef;
         if(date) {
+            // 指定された日付以前の計測データを取得する
             query = query.where("measured_at", "<=", date);
         }
 
         query.orderBy("measured_at", "desc").limit(FETCH_COUNT).get().then(querySnapshot => {
-            console.log("fetched");
             this._list = [];
             const prevSelectedId = this._selectedData ? this._selectedData.id : null;
             this._selectedData = null;
-            const duration = Setting.getDataListDuration() * 60 * 60 * 1000;
+            const duration = Setting.getDataListDuration() * 60 * 60 * 1000; // チャート表示期間
             querySnapshot.forEach(doc => {
                 const newData = new SondeData(doc.id, doc.data());
-                if(!date) {
-                    date = newData.measuredAt;
-                }
-
-                if(date.getTime() - newData.measuredAt.getTime() <= duration && !this.systemSetting.isDisabledSondeDataId(doc.id)) {
-                    this._list.push(newData);
-                    if(newData.id === prevSelectedId) {
-                        this._selectedData = newData;
+                if(!this.systemSetting.isDisabledSondeDataId(doc.id)) {
+                    // 無効化されていないデータ
+                    if(!date) {
+                        // 日付が指定されていない場合は，取得した中で有効な最新のデータの日付をチャート表示期間の基準にする
+                        date = newData.measuredAt;
                     }
+    
+                    if(date.getTime() - newData.measuredAt.getTime() <= duration) {
+                        // チャート表示期間の基準から指定された期間内のデータをチャート表示リストに追加する
+                        this._list.push(newData);
+                        if(newData.id === prevSelectedId) {
+                            this._selectedData = newData;
+                        }
+                    }    
                 }
             });
             if(!this._selectedData && this._list.length > 0) {
+                // 表示選択済みデータが指定されていない場合は，取得されたチャート表示リストの中の最新のデータを選択する
                 this._selectedData = this._list[0];
             }
             if(this._selectedData && this.lastFetchedAt.getTime() - this._selectedData.measuredAt.getTime() < FETCH_TIMEOUT) {
+                // 表示選択済みデータの計測日時が前回のデータ更新日時から1時間以内なら，10秒後にデータ再取得
                 setTimeout(() => {this.fetch();}, FETCH_INTERVAL);
             }
             else {
-                console.log("fetch timed out");
                 this.lastFetchedAt = null;
             }
             m.redraw();
