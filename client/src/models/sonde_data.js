@@ -3,8 +3,8 @@ import Setting from "./setting";
 import Unit from "./unit";
 import Direction from "./direction";
 import agh from "agh.sprintf";
-import firebase from "firebase/app";
-import "firebase/firestore";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 import i18next from "i18next";
 
 const SONDE_DATA_COLLECTION = "sondeview";

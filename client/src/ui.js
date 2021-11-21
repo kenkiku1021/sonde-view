@@ -1,6 +1,6 @@
 import m from "mithril";
 import i18next from 'i18next';
-import firebase from "firebase/app";
+import {getAuth, signOut} from "firebase/auth";
 
 let menuActive = false;
 
@@ -23,7 +23,8 @@ const UI = {
         view: vnode => {
             return m("a.navbar-item", {
                 onclick: e => {
-                    firebase.auth().signOut().then(() => {
+                    const auth = getAuth();
+                    signOut(auth).then(() => {
                         location.reload();
                     })
                 },

@@ -4,7 +4,10 @@ $footer-padding: 0.75rem 1rem 0.75rem 1rem;
 $modal-background-background-color: rgba(0, 0, 0, 0.5);;
 
 @import "~bulma/bulma";
-@import "firebaseui/dist/firebaseui.css";
+
+.login {
+  margin: 2em auto 0 auto;
+}
 
 .preview table td {
   text-align: right;

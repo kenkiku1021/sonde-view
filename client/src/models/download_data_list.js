@@ -1,6 +1,6 @@
 import m from "mithril";
-import firebase from "firebase/app";
-import "firebase/firestore";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 
 const DOWNLOAD_DATA_COLLECTION = "download_data"; // collection name in Firebase
 const FETCH_COUNT = 10;

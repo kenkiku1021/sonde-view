@@ -1,6 +1,6 @@
 import m from "mithril";
-import firebase from "firebase/app";
-import "firebase/firestore";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 import i18next from "i18next";
 
 const SYSTEM_SETTING_COLLECTION = "system_setting";

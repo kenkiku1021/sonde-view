@@ -15,7 +15,6 @@ $color09: lightgray;
 $color10: gainsboro;
 
 @import "~bulma/bulma";
-@import "firebaseui/dist/firebaseui.css";
 
 .navbar {
     .data-title {
@@ -37,15 +36,6 @@ $color10: gainsboro;
 
 .login {
     margin: 2em auto 0 auto;
-    max-width: 400px;
-    text-align: center;
-
-    h1 {
-        font-size: 120%;
-        font-weight: bold;
-        border-bottom: solid 1px #777;
-        margin: 0.5rem 0 1rem 0;
-    }    
 }
 
 .data-selector {
@@ -506,6 +496,17 @@ $color10: gainsboro;
 
     .toggle-button.is-selected::before {
         content: "✔ ";
+    }
+}
+
+.container.login {
+    h2 {
+        font-size: 1.3rem;
+        font-weight: bold;
+        border-bottom: solid 1px #777;
+        margin-bottom: 1rem;
+        margin-top: 1rem;
+        padding-bottom: 0.3rem;
     }
 }
 

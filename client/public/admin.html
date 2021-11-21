@@ -10,11 +10,53 @@
 </head>
 
 <body>
-    <div class="login">
-        <h1>WindView login</h1>
-        <div id="firebaseui-auth-container"></div>
-        <div id="loader">Loading...</div>    
-    </div>
+    <nav class="navbar is-primary">
+        <div class="navbar-brand"><a class="navbar-item">WindView Admin</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container login">
+            <div class="columns">
+                <div class="column">
+                    <nav class="panel">
+                        <p class="panel-heading">Sign in with email</p>
+        
+                        <div class="panel-block">
+                            <p class="control">
+                                <input type="email" id="email" class="input" placeholder="E-mail (user@example.com)">
+                            </p>
+                        </div>
+                        <div class="panel-block">
+                            <p class="control">
+                                <input type="password" id="email-password" class="input" placeholder="Password">
+                            </p>
+                        </div>
+                        <div class="panel-block">
+                            <button type="button" id="email-login" class="button is-info is-fullwidth is-large">
+                                <i class="far fa-envelope"></i>&nbsp;
+                                Sign in with email
+                            </button>
+                        </div>
+                    </nav>        
+                </div>
+
+                <div class="column">
+                    <nav class="panel">
+                        <p class="panel-heading">Sign in with Google</p>
+                        <div class="panel-block">
+                            <button type="button" id="google-login" class="button is-primary is-fullwidth is-large">
+                                <i class="fab fa-google"></i>&nbsp;
+                                Sign in with Google
+                            </button>
+                        </div>
+                    </nav>        
+                </div>
+            </div>
+
+        </div>
+    </main>
+
     <script src="fireabase-config.js"></script>
     <script src="dist/admin.js"></script>
 </body>

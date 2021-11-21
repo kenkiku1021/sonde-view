@@ -1,8 +1,8 @@
 import m from "mithril";
 import Setting from "./setting";
 import {SondeData, SondeDataItem} from "./sonde_data";
-import firebase from "firebase/app";
-import "firebase/firestore";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 import agh from "agh.sprintf";
 import SystemSetting from "./system_setting";
 
