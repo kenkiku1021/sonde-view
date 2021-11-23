@@ -1,20 +1,20 @@
 import m from "mithril";
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
+import { db } from '../../firebase-app';
+import { collection, query, getDocs, doc, setDoc, deleteDoc } from "firebase/firestore";
 import i18next from "i18next";
 
 const USERS_COLLECTION = "users";
 
 class AdminUsers {
   constructor() {
-    this.db = firebase.firestore();
-    this.usersRef = this.db.collection(USERS_COLLECTION);
+    this.usersRef = collection(db, USERS_COLLECTION);
     this._list = [];
   }
 
-  fetch() {
-    let query = this.usersRef;
-    query.get().then(querySnapshot => {
+  async fetch() {
+    try {
+      const q = query(this.usersRef);
+      const querySnapshot = await getDocs(q);
       this._list = [];
       querySnapshot.forEach(doc => {
         const data = doc.data();
@@ -28,57 +28,60 @@ class AdminUsers {
         });
       });
       m.redraw();
-    }).catch(err => {
-        console.log("Cannot fetch users list", err);
+    } catch(e) {
+        console.log("Cannot fetch users list", e);
         alert("Cannot fetch users");
-    });
+    }
   }
 
   list() {
     return this._list;
   }
 
-  append(email, name, memo) {
-    return this.usersRef.doc(email).set({
-      allow: true,
-      admin: false,
-      upload: false,
-      name: name,
-      memo: memo,
-    }).then(() => {
+  async append(email, name, memo) {
+    try {
+      await setDoc(doc(db, USERS_COLLECTION, email), {
+        allow: true,
+        admin: false,
+        upload: false,
+        name: name ? name : "",
+        memo: memo ? memo : "",
+      });
       alert(i18next.t("userAppended"));
       this.fetch();
-    }).catch(err => {
-      console.log(err);
-      alert(i18next.t("userUpdateError") + err);
-    });
+    } catch(e) {
+      console.log(e);
+      alert(i18next.t("userUpdateError") + e);
+    }
   }
 
-  update(user, withAlert=false) {
-    return this.usersRef.doc(user.email).update({
-      allow: user.allow,
-      admin: user.admin,
-      upload: user.upload,
-      name: user.name,
-      memo: user.memo,
-    }).then(() => {
+  async update(user, withAlert=false) {
+    try {
+      await setDoc(doc(db, USERS_COLLECTION, user.email), {
+        allow: user.allow,
+        admin: user.admin,
+        upload: user.upload,
+        name: user.name,
+        memo: user.memo,  
+      });
       if(withAlert) {
         alert(i18next.t("userUpdated"));
       }
       this.fetch();
-    }).catch(err => {
-      console.log(err);
-      alert(i18next.t("userUpdateError") + err);
-    });
+    } catch (e) {
+      console.log(e);
+      alert(i18next.t("userUpdateError") + e);
+    }
   }
 
-  delete(email) {
-    return this.usersRef.doc(email).delete().then(() => {
+  async delete(email) {
+    try {
+      await deleteDoc(doc(db, USERS_COLLECTION, email));
       this.fetch();
-    }).catch(err => {
-      console.log(err);
-      alert(i18next.t("userUpdateError") + err);
-    });
+    } catch(e) {
+      console.log(e);
+      alert(i18next.t("userUpdateError") + e);
+    }
   }
 }
 

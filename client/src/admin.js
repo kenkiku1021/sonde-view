@@ -1,9 +1,7 @@
 import m from "mithril";
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
-//import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth, db } from "./firebase-app";
+import { onAuthStateChanged, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { doc, getDoc } from "@firebase/firestore";
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { i18nResources } from "./admin/resources";
@@ -11,29 +9,28 @@ import AdminUsersPage from "./admin/admin-users-page";
 import AdminDataPage from "./admin/admin-data-page";
 import AdminLocationsPage from "./admin/admin-locations-page";
 
-const firebasseApp = firebase.initializeApp(firebaseConfig);
-const auth = getAuth(firebasseApp);
-
 i18next.use(LanguageDetector).init({
   fallbackLng: "en",
   debug: true,
   resources: i18nResources,
 }).then(() => {
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
-      const db = firebase.firestore();
-      const userRef = db.collection("users").doc(user.email);
-      userRef.get().then(doc => {
-        const data = doc.data();
+      // ユーザ権限の確認
+      const docRef = doc(db, "users", user.email);
+      const docSnap = await getDoc(docRef);
+      if(docSnap.exists()) {
+        const data = docSnap.data();
         if (data && data.admin) {
           startApp();
         }
         else {
           alert(i18next.t("adminPrivilegeError"));
         }
-      }).catch(error => {
+      }
+      else {
         alert(i18next.t("cannotGetUserInfo"));
-      });
+      }
     }
   });
 });

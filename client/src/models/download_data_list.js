@@ -1,6 +1,6 @@
 import m from "mithril";
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
+import { db } from "../firebase-app";
+import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 
 const DOWNLOAD_DATA_COLLECTION = "download_data"; // collection name in Firebase
 const FETCH_COUNT = 10;
@@ -11,30 +11,25 @@ const FETCH_COUNT = 10;
 
 class DonwloadDataList {
   constructor() {
-    this.db = firebase.firestore();
-    this.downloadDataRef = this.db.collection(DOWNLOAD_DATA_COLLECTION);
+    this.downloadDataRef = collection(db, DOWNLOAD_DATA_COLLECTION);
     this._list = [];
   }
 
-  fetch() {
-    let query = this.downloadDataRef;
-    query.orderBy("updated_at", "desc").limit(FETCH_COUNT).get().then(querySnapshot => {
-      this._list = [];
-      querySnapshot.forEach(doc => {
-        const data = doc.data();
-        const item = {
-          name: data.name,
-          size: data.size,
-          url: data.url,
-          updated_at: data.updated_at ? data.updated_at.toDate() : new Date(),
-        };
-        this._list.push(item);
-      });
-      m.redraw();
-    }).catch(err => {
-      console.log("Cannot fetch download data list", err);
-      m.route.set("/error/:err", {err: "errMsgInsufficientPrivilege"});
+  async fetch() {
+    const q = query(this.downloadDataRef, orderBy("updated_at", "desc"), limit(FETCH_COUNT));
+    const querySnapshot = await getDocs(q);
+    this._list = [];
+    querySnapshot.forEach(doc => {
+      const data = doc.data();
+      const item = {
+        name: data.name,
+        size: data.size,
+        url: data.url,
+        updated_at: data.updated_at ? data.updated_at.toDate() : new Date(),
+      };
+      this._list.push(item);
     });
+    m.redraw();
   }
 
   list() {

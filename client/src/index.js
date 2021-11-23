@@ -6,16 +6,12 @@ import ChartPage from "./chart-page";
 import HistoryPage from "./history-page";
 import SetupPage from "./setup-page";
 import DownloadPage from "./download-page";
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-//import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "./firebase-app";
+import { onAuthStateChanged, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { i18nResources } from "./resources";
 
-const firebasseApp = firebase.initializeApp(firebaseConfig);
-const auth = getAuth(firebasseApp);
 onAuthStateChanged(auth, (user) => {
     if(user) {
         startApp();

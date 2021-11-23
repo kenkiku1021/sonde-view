@@ -3,8 +3,8 @@ import Setting from "./setting";
 import Unit from "./unit";
 import Direction from "./direction";
 import agh from "agh.sprintf";
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
+import { db } from "../firebase-app";
+import { doc, setDoc} from "firebase/firestore";
 import i18next from "i18next";
 
 const SONDE_DATA_COLLECTION = "sondeview";
@@ -273,11 +273,10 @@ class SondeData {
         }
     }
 
-    update() {
-        const db = firebase.firestore();
-        const sondeDataRef = db.collection(SONDE_DATA_COLLECTION);
+    async update() {
+        const docRef = doc(db, SONDE_DATA_COLLECTION, String(this.id));
         const now = new Date();
-        sondeDataRef.doc(String(this.id)).set({
+        await setDoc(docRef, {
             lat: this.lat,
             lng: this.lng,
             mag_dec: this.magDeclination,
@@ -292,11 +291,6 @@ class SondeData {
                     windspeed: data.windSpeed,
                 };
             }),
-        }).then(() => {
-            console.log("Data updated");
-        }).catch(err => {
-            alert(i18next.t("dataUpdateError"));
-            console.log(err);
         });
     }
 }

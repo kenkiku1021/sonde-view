@@ -1,19 +1,19 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
+import { db } from '../../firebase-app';
+import { collection, query, where, getDocs } from "firebase/firestore";
 import m from "mithril";
 
 const LOCATIONS_COLLECTION = "locations";
 
 class Locations {
   constructor() {
-    this.db = firebase.firestore();
-    this.locationsRef = this.db.collection(LOCATIONS_COLLECTION);
+    this.locationsRef = collection(db, LOCATIONS_COLLECTION);
     this._list = [];
   }
 
-  fetch() {
-    let query = this.locationsRef.where("disabled", "!=", true);
-    query.get().then(querySnapshot => {
+  async fetch() {
+    try {
+      const q = query(this.locationsRef, where("disabled", "!=", true));
+      const querySnapshot = await getDocs(q);
       this._list = [
         {
           id: 0,
@@ -45,10 +45,10 @@ class Locations {
         }
       });
       m.redraw();
-    }).catch(err => {
-        console.log("Cannot fetch locations list", err);
-        alert("Cannot fetch locations");
-    });
+    } catch(e) {
+      console.log("Cannot fetch locations list", e);
+      alert("Cannot fetch locations");
+    }
   }
 
   list() {
