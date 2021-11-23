@@ -1,6 +1,8 @@
 require "tmpdir"
 require "cgi"
 require "time"
+require 'open-uri'
+require "json"
 require "functions_framework"
 require "google/cloud/storage"
 require "google/cloud/firestore"
@@ -141,6 +143,26 @@ FunctionsFramework.cloud_event "file_deleted" do |event|
   delete_download_data payload['name']
 end
 
+FunctionsFramework.cloud_event "sondeview_document_created" do |event|
+  # create sondeview document on firestore
+  # get location from lat/lng
+  payload = event.data
+  lat = payload["value"]["fields"]["lat"]["doubleValue"]
+  lng = payload["value"]["fields"]["lng"]["doubleValue"]
+  firestore = Google::Cloud::Firestore.new
+  doc_name = event.subject.split("documents/").last
+  logger.info "sondeview document created : #{doc_name}"
+  doc = firestore.doc(doc_name)
+  data = doc.get.data.dup
+  logger.info data
+
+  location = get_location_from_lat_lng(lat, lng)
+  if location
+    data["location"] = location
+  end
+  doc.set data
+end
+
 def log_error(ex)
   if ex.instance_of? Exception
     msg = ex.message + "\n" + ex.backtrace.join("\n")
@@ -261,4 +283,23 @@ def delete_download_data(filename)
   doc = firestore.doc("#{DOWNLOAD_DATA_COLLECTION}/#{key}")
   doc.delete
   key
+end
+
+def get_location_from_lat_lng(lat, lng)
+  api_key = ENV["GEOCODING_API_KEY"]
+  if api_key.nil? || api_key == ""
+    raise "API Key not specified"
+  end
+
+  logger.info "get location from lat/lng (lat: #{lat}, lng: #{lng})"
+  location = nil
+  url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=#{lat},#{lng}&key=#{api_key}"
+  URI.open(url) do |f|
+    data = JSON.parse(f.read, symbolize_names: true)
+    if data && data[:results]
+      location = data[:results].first
+    end
+  end
+
+  location
 end
