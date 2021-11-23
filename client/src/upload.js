@@ -36,16 +36,20 @@ function signinWithGoogle() {
 }
 
 function signinWithEmail() {
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in 
-      return true;
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      alert(`Auth error: ${errorCode} ${errorMessage}`);
-    });
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("email-password");
+  const email = emailInput.value;
+  const password = passwordInput.value;
+  signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+          // Signed in 
+          return true;
+      })
+      .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          alert(`Auth error: ${errorCode} ${errorMessage}`);
+      });
 }
 
 i18next.use(LanguageDetector).init({

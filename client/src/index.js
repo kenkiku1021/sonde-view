@@ -7,7 +7,7 @@ import HistoryPage from "./history-page";
 import SetupPage from "./setup-page";
 import DownloadPage from "./download-page";
 import { auth } from "./firebase-app";
-import { onAuthStateChanged, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { i18nResources } from "./resources";
@@ -47,7 +47,11 @@ function signinWithGoogle() {
 }
 
 function signinWithEmail() {
-    createUserWithEmailAndPassword(auth, email, password)
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("email-password");
+    const email = emailInput.value;
+    const password = passwordInput.value;
+    signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in 
             return true;
