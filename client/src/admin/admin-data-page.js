@@ -41,6 +41,7 @@ const HistroyTableView = {
       m("thead", [
         m("tr", [
           m("th[colspan=2]", i18next.t("dataDateTime")),
+          m("th", i18next.t("dataLocation")),
           m("th", ""),
           m("th", i18next.t("disabledData")),
         ]),
@@ -51,6 +52,7 @@ const HistroyTableView = {
             return m("tr", [
               idx === 0 ? m("th.date", {rowspan: item.list.length}, item.date) : "",
               m("td", data.getTime()),
+              m("td", data.locationLabel()),
               m("td", [
                 m("button.button.is-danger.is-small[type=button]", {
                   onclick: e => {
