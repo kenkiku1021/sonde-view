@@ -10,6 +10,7 @@ require "./windsond-data-parser"
 
 FIRESTORE_COLLECTION = "sondeview"
 DOWNLOAD_DATA_COLLECTION = "download_data"
+SYSTEM_SETTING_COLLECTION = "system_setting"
 
 class WindviewAuthError < Exception
 end
@@ -146,13 +147,16 @@ end
 FunctionsFramework.cloud_event "sondeview_document_created" do |event|
   # create sondeview document on firestore
   # get location from lat/lng
+  # set disabled flag from system_setting
   payload = event.data
   lat = payload["value"]["fields"]["lat"]["doubleValue"]
   lng = payload["value"]["fields"]["lng"]["doubleValue"]
   firestore = Google::Cloud::Firestore.new
+
   doc_name = event.subject.split("documents/").last
   logger.info "sondeview document created : #{doc_name}"
   doc = firestore.doc(doc_name)
+  data_id = doc.get.document_id
   data = doc.get.data.dup
   logger.info data
 
@@ -161,6 +165,31 @@ FunctionsFramework.cloud_event "sondeview_document_created" do |event|
     data["location"] = location
   end
   doc.set data
+
+  # get default disabled or not
+  sonde_data_default_disabled_flag_doc = firestore.doc("#{SYSTEM_SETTING_COLLECTION}/sonde_data_default_disabled_flag")
+  sonde_data_default_disabled_flag_snapshot = sonde_data_default_disabled_flag_doc.get
+  if sonde_data_default_disabled_flag_snapshot.exists?
+    sonde_data_default_disabled_flag_data = sonde_data_default_disabled_flag_snapshot.data
+    logger.info sonde_data_default_disabled_flag_data.to_s
+    sonde_data_default_disabled_flag = sonde_data_default_disabled_flag_data ? sonde_data_default_disabled_flag_snapshot.data[:flag] : false
+    logger.info "system_setting/sonde_data_default_disabled_flag: #{sonde_data_default_disabled_flag}"
+  else
+    logger.info "system_setting/sonde_data_default_disabled_flag not exists"
+    sonde_data_default_disabled_flag = false
+  end
+  
+  if sonde_data_default_disabled_flag
+    # add data ID to disabled list
+    logger.info "append to disabled_sonde_data_id: #{data_id}"
+    disabled_list_doc = firestore.doc("#{SYSTEM_SETTING_COLLECTION}/disabled_sonde_data_id")
+    disabled_list_snapshot = disabled_list_doc.get
+    disabled_list = disabled_list_snapshot.exists? ? disabled_list_snapshot.data[:list] : []
+    unless disabled_list.include?(data_id)
+      disabled_list << data_id
+      disabled_list_doc.set({list: disabled_list})
+    end
+  end
 end
 
 def log_error(ex)

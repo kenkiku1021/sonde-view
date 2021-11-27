@@ -8,6 +8,7 @@ import { i18nResources } from "./admin/resources";
 import AdminUsersPage from "./admin/admin-users-page";
 import AdminDataPage from "./admin/admin-data-page";
 import AdminLocationsPage from "./admin/admin-locations-page";
+import AdminSystemSettingPage from "./admin/admin-systemsetting-page";
 
 i18next.use(LanguageDetector).init({
   fallbackLng: "en",
@@ -86,6 +87,7 @@ function startApp() {
     "/users": AdminUsersPage,
     "/data": AdminDataPage,
     "/locations": AdminLocationsPage,
+    "/systemsetting": AdminSystemSettingPage,
   });
 
   window.onresize = e => {

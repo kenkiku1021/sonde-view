@@ -5,11 +5,25 @@ import i18next from "i18next";
 
 const SYSTEM_SETTING_COLLECTION = "system_setting";
 const DISABLED_SONDE_DATA_ID_LIST_ID = "disabled_sonde_data_id";
+const SONDE_DATA_DEFAULT_DISABLED_FLAG = "sonde_data_default_disabled_flag";
 
 class SystemSetting {
   constructor() {
     this.disabledSondeDataIdRef = doc(db, SYSTEM_SETTING_COLLECTION, DISABLED_SONDE_DATA_ID_LIST_ID);
     this.disabledSondeDataIdList = [];
+    this.sondeDataDefaultDisabledFlagRef = doc(db, SYSTEM_SETTING_COLLECTION, SONDE_DATA_DEFAULT_DISABLED_FLAG);
+    this.sondeDataDefaultDisabledFlag = false;
+  }
+
+  async getSondeDataDefaultDisabledFlag() {
+    const docSnap = await getDoc(this.sondeDataDefaultDisabledFlagRef);
+    this.sondeDataDefaultDisabledFlag = docSnap.exists() ? docSnap.data().flag : false;
+    m.redraw();
+  }
+
+  setSondeDataDefaultDisabledFlag(value) {
+    this.sondeDataDefaultDisabledFlag = value;
+    setDoc(this.sondeDataDefaultDisabledFlagRef, {flag: this.sondeDataDefaultDisabledFlag});
   }
 
   isDisabledSondeDataId(id) {
