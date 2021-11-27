@@ -78,9 +78,11 @@ const HistoryCardView = {
                         return m("li", [
                             m(m.route.Link, {
                                 href: m.buildPathname("/main/:date", {date: item.measuredAt.getTime()}),
+                                class: "measured-time",
                             }, [
                                 item.getTime(),
                             ]),
+                            m(".location-label", item.locationLabel()),
                             m("a.map[target=_blank]", {
                                 href: item.mapUrl(),
                             }, [m("span.icon", m(UI.MapIcon)), " ", i18next.t("map")]),

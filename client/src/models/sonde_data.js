@@ -138,6 +138,7 @@ class SondeData {
         this.id = Math.floor(this.measuredAt.getTime() / 1000);
         this.updatedAt = null;
         this.groundMSL = 0;
+        this.location = null;
         this._records = [];
     }
 
@@ -148,7 +149,8 @@ class SondeData {
         this.measuredAt = data.measured_at ? data.measured_at.toDate() : this.measuredAt;
         this.updatedAt = data.updated_at ? data.updated_at.toDate() : this.updatedAt;
         this._records = data.values.map(v => new SondeDataItem(v, this.magDeclination));
-        this.finished = data["finished"] ? data["finished"] : false
+        this.finished = data["finished"] ? data["finished"] : false;
+        this.location = data["location"] ? data["location"] : null;
     }
 
     setMeasuredAtAsString(value) {
@@ -246,6 +248,22 @@ class SondeData {
 
     mapUrl() {
         return `https://www.google.com/maps/search/?api=1&query=${this.lat}%2C${this.lng}`;
+    }
+
+    locationLabel() {
+        if(this.location && this.location.address_components) {
+            const country = this.location.address_components.find(item => item.types[0] == "country");
+            const admin_area_lv1 = this.location.address_components.find(item => item.types[0] == "administrative_area_level_1");
+            const locality = this.location.address_components.find(item => item.types[0] == "locality");
+            const countryLabel = country ? country.short_name : "";
+            const adminLv1Label = admin_area_lv1 ? admin_area_lv1.short_name : "";
+            const localityLabel = locality ? locality.long_name : "";
+
+            return `${localityLabel} ${adminLv1Label}, ${countryLabel}`;
+        }
+        else {
+            return "";
+        }
     }
 
     parseDataText(txt) {

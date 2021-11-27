@@ -244,6 +244,7 @@ const DstChart = {
             }, m("i.fas.fa-search-plus")),
             m(".zoom-label", agh.sprintf("×%.1f", vnode.state.zoom)),
             vnode.attrs.dataList.selectedData() ? m(ChartMapLinkView, {data: vnode.attrs.dataList.selectedData()}) : "",
+            vnode.attrs.dataList.selectedData() ? m(ChartLocationLabelView, {data: vnode.attrs.dataList.selectedData()}) : "",
         ]);
     },
 
@@ -399,6 +400,7 @@ const SpdChart = {
                 }
             }, Setting.getSpdChartShowFrom() ? i18next.t("btnFrom") : i18next.t("btnTo")),
             m(ChartMapLinkView, {data: vnode.attrs.data}),
+            m(ChartLocationLabelView, {data: vnode.attrs.data}),
         ]);
     },
 
@@ -443,6 +445,12 @@ const ChartMapLinkView = {
             ]),
         ]);
     },
-}
+};
+
+const ChartLocationLabelView = {
+    view: vnode => {
+        return m(".location-label", vnode.attrs.data.locationLabel());
+    },
+};
 
 export {DstChart, SpdChart};
