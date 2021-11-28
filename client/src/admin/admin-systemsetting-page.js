@@ -7,6 +7,7 @@ import SystemSetting from "../models/system_setting";
 const AdminSystemSettingPage = {
   oninit: vnode => {
     vnode.state.systemSetting = new SystemSetting();
+    vnode.state.systemSetting.getSondeDataDefaultDisabledFlag();
   },
 
   view: vnode => {
