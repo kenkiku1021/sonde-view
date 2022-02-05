@@ -148,23 +148,25 @@ FunctionsFramework.cloud_event "sondeview_document_created" do |event|
   # create sondeview document on firestore
   # get location from lat/lng
   # set disabled flag from system_setting
-  payload = event.data
-  lat = payload["value"]["fields"]["lat"]["doubleValue"]
-  lng = payload["value"]["fields"]["lng"]["doubleValue"]
   firestore = Google::Cloud::Firestore.new
-
+  payload = event.data
   doc_name = event.subject.split("documents/").last
   logger.info "sondeview document created : #{doc_name}"
   doc = firestore.doc(doc_name)
   data_id = doc.get.document_id
-  data = doc.get.data.dup
-  logger.info data
 
-  location = get_location_from_lat_lng(lat, lng)
-  if location
-    data["location"] = location
+  if payload && payload["value"] && payload["value"]["fields"] && payload["value"]["fields"]["lat"] && payload["value"]["fields"]["lng"]
+    # get location from lat & lng
+    lat = payload["value"]["fields"]["lat"]["doubleValue"]
+    lng = payload["value"]["fields"]["lng"]["doubleValue"]
+    data = doc.get.data.dup
+    location = get_location_from_lat_lng(lat, lng)
+    if location
+      data["location"] = location
+    end
+    doc.set data
   end
-  doc.set data
+
 
   # get default disabled or not
   sonde_data_default_disabled_flag_doc = firestore.doc("#{SYSTEM_SETTING_COLLECTION}/sonde_data_default_disabled_flag")
@@ -320,15 +322,23 @@ def get_location_from_lat_lng(lat, lng)
     raise "API Key not specified"
   end
 
-  logger.info "get location from lat/lng (lat: #{lat}, lng: #{lng})"
-  location = nil
-  url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=#{lat},#{lng}&key=#{api_key}"
-  URI.open(url) do |f|
-    data = JSON.parse(f.read, symbolize_names: true)
-    if data && data[:results]
-      location = data[:results].first
+  if lat.to_i != 0 && lng.to_i != 0
+    logger.info "get location from lat/lng (lat: #{lat.to_f}, lng: #{lng.to_f})"
+    location = nil
+    url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=#{lat},#{lng}&key=#{api_key}"
+    begin
+      URI.open(url) do |f|
+        data = JSON.parse(f.read, symbolize_names: true)
+        if data && data[:results]
+          location = data[:results].first
+        end
+      end
+    rescue
+      location = nil
     end
-  end
 
-  location
+    location
+  else  
+    nil
+  end
 end
