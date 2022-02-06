@@ -147,7 +147,6 @@ end
 FunctionsFramework.cloud_event "sondeview_document_created" do |event|
   # create sondeview document on firestore
   # get location from lat/lng
-  # set disabled flag from system_setting
   firestore = Google::Cloud::Firestore.new
   payload = event.data
   doc_name = event.subject.split("documents/").last
@@ -165,32 +164,6 @@ FunctionsFramework.cloud_event "sondeview_document_created" do |event|
       data["location"] = location
     end
     doc.set data
-  end
-
-
-  # get default disabled or not
-  sonde_data_default_disabled_flag_doc = firestore.doc("#{SYSTEM_SETTING_COLLECTION}/sonde_data_default_disabled_flag")
-  sonde_data_default_disabled_flag_snapshot = sonde_data_default_disabled_flag_doc.get
-  if sonde_data_default_disabled_flag_snapshot.exists?
-    sonde_data_default_disabled_flag_data = sonde_data_default_disabled_flag_snapshot.data
-    logger.info sonde_data_default_disabled_flag_data.to_s
-    sonde_data_default_disabled_flag = sonde_data_default_disabled_flag_data ? sonde_data_default_disabled_flag_snapshot.data[:flag] : false
-    logger.info "system_setting/sonde_data_default_disabled_flag: #{sonde_data_default_disabled_flag}"
-  else
-    logger.info "system_setting/sonde_data_default_disabled_flag not exists"
-    sonde_data_default_disabled_flag = false
-  end
-  
-  if sonde_data_default_disabled_flag
-    # add data ID to disabled list
-    logger.info "append to disabled_sonde_data_id: #{data_id}"
-    disabled_list_doc = firestore.doc("#{SYSTEM_SETTING_COLLECTION}/disabled_sonde_data_id")
-    disabled_list_snapshot = disabled_list_doc.get
-    disabled_list = disabled_list_snapshot.exists? ? disabled_list_snapshot.data[:list] : []
-    unless disabled_list.include?(data_id)
-      disabled_list << data_id
-      disabled_list_doc.set({list: disabled_list})
-    end
   end
 end
 
