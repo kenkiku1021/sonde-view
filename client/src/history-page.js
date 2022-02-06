@@ -86,13 +86,13 @@ const HistoryCardView = {
                         m("a.map[target=_blank]", {
                             href: item.mapUrl(),
                         }, [m("span.icon", m(UI.MapIcon)), " ", i18next.t("map")]),
-                        m("a.button.is-info.is-small.history-button[href=#]", {
+                        m("a.button.is-info.is-small.history-button.is-hidden-mobile[href=#]", {
                             download: `${item.downloadBasename()}.csv`,
                             onclick: e => {
                                 e.target.href = window.URL.createObjectURL(item.generateCsvAsBlob());
                             }
                         }, [m(UI.DownloadIcon), "CSV"]),
-                        m("a.button.is-info.is-small.history-button[href=#]", {
+                        m("a.button.is-info.is-small.history-button.is-hidden-mobile[href=#]", {
                             download: `${item.downloadBasename()}.xml`,
                             onclick: e => {
                                 e.target.href = window.URL.createObjectURL(item.generateXmlAsBlob());
