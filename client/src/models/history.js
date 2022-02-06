@@ -25,7 +25,6 @@ class History {
         this.sondeDataRef = collection(db, SONDEVIEW_COLLECTION);
         this._dateList = [];
         this.systemSetting = new SystemSetting();
-        this.systemSetting.getDisabledSondeDataIdList();
         this.adminMode = false;
     }
 
@@ -45,19 +44,17 @@ class History {
         let currentDateText;
         let currentData;
         querySnapshot.forEach(doc => {
-            if(this.adminMode || !this.systemSetting.isDisabledSondeDataId(doc.id)) {
-                const newData = new SondeData(doc.id, doc.data());
-                const dateText = newData.getDate();
-                if (dateText != currentDateText) {
-                    currentDateText = dateText;
-                    currentData = {
-                        date: dateText,
-                        list: [],
-                    };
-                    this._dateList.push(currentData);
-                }
-                currentData.list.push(newData);    
+            const newData = new SondeData(doc.id, doc.data());
+            const dateText = newData.getDate();
+            if (dateText != currentDateText) {
+                currentDateText = dateText;
+                currentData = {
+                    date: dateText,
+                    list: [],
+                };
+                this._dateList.push(currentData);
             }
+            currentData.list.push(newData);    
         });
         m.redraw();
     }

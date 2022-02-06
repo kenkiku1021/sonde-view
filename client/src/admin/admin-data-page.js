@@ -30,7 +30,6 @@ const AdminDataPage = {
 const HistroyTableView = {
   oninit: async (vnode) => {
     vnode.state.systemSetting = new SystemSetting();
-    vnode.state.systemSetting.getDisabledSondeDataIdList();
   },
 
   onupdate: vnode => {
@@ -65,14 +64,9 @@ const HistroyTableView = {
               m("td", [
                 m("label.checkbox", [
                   m("input[type=checkbox]", {
-                    checked: vnode.state.systemSetting.isDisabledSondeDataId(data.id),
+                    checked: false,
+                    disabled: true,
                     onclick: e => {
-                      if(e.target.checked) {
-                        vnode.state.systemSetting.addDisabledSondeDataId(data.id);
-                      }
-                      else {
-                        vnode.state.systemSetting.removeDisabledSondeDataId(data.id);
-                      }
                     }
                   }),
                 ]),

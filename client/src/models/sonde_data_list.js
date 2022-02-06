@@ -22,7 +22,6 @@ class SondeDataList {
         this._selectedData = null;
         this.lastFetchedAt = null;
         this.systemSetting = new SystemSetting();
-        this.systemSetting.getDisabledSondeDataIdList();
     }
 
     // 計測データを取得する
@@ -52,20 +51,17 @@ class SondeDataList {
         const duration = Setting.getDataListDuration() * 60 * 60 * 1000; // チャート表示期間
         querySnapshot.forEach(doc => {
             const newData = new SondeData(doc.id, doc.data());
-            if(!this.systemSetting.isDisabledSondeDataId(doc.id)) {
-                // 無効化されていないデータ
-                if(!date) {
-                    // 日付が指定されていない場合は，取得した中で有効な最新のデータの日付をチャート表示期間の基準にする
-                    date = newData.measuredAt;
-                }
+            if(!date) {
+                // 日付が指定されていない場合は，取得した中で有効な最新のデータの日付をチャート表示期間の基準にする
+                date = newData.measuredAt;
+            }
 
-                if(date.getTime() - newData.measuredAt.getTime() <= duration) {
-                    // チャート表示期間の基準から指定された期間内のデータをチャート表示リストに追加する
-                    this._list.push(newData);
-                    if(newData.id === prevSelectedId) {
-                        this._selectedData = newData;
-                    }
-                }    
+            if(date.getTime() - newData.measuredAt.getTime() <= duration) {
+                // チャート表示期間の基準から指定された期間内のデータをチャート表示リストに追加する
+                this._list.push(newData);
+                if(newData.id === prevSelectedId) {
+                    this._selectedData = newData;
+                }
             }
         });
         if(!this._selectedData && this._list.length > 0) {
