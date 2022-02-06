@@ -111,6 +111,12 @@ const UI = {
         }
     },
 
+    DownloadIcon: {
+        view: vnode => {
+            return m("i.fas.fa-download[aria-hidden=true]");
+        }
+    },
+
     Footer: {
         view: vnode => {
             return m("footer.footer", [

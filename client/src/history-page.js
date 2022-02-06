@@ -72,23 +72,35 @@ const HistoryCardView = {
                 ]),
             ]),
             m("ul.card-content.history-list", {
-                    class: vnode.state.collapsed ? "is-hidden" : "is-block",
-                }, [
-                    vnode.attrs.list.map(item => {
-                        return m("li", [
-                            m(m.route.Link, {
-                                href: m.buildPathname("/main/:date", {date: item.measuredAt.getTime()}),
-                                class: "measured-time",
-                            }, [
-                                item.getTime(),
-                            ]),
-                            m(".location-label", item.locationLabel()),
-                            m("a.map[target=_blank]", {
-                                href: item.mapUrl(),
-                            }, [m("span.icon", m(UI.MapIcon)), " ", i18next.t("map")]),
-                        ]);
-                    }),
-                ]),
+                class: vnode.state.collapsed ? "is-hidden" : "is-block",
+            }, [
+                vnode.attrs.list.map(item => {
+                    return m("li", [
+                        m(m.route.Link, {
+                            href: m.buildPathname("/main/:date", {date: item.measuredAt.getTime()}),
+                            class: "measured-time",
+                        }, [
+                            item.getTime(),
+                        ]),
+                        m(".location-label", item.locationLabel()),
+                        m("a.map[target=_blank]", {
+                            href: item.mapUrl(),
+                        }, [m("span.icon", m(UI.MapIcon)), " ", i18next.t("map")]),
+                        m("a.button.is-info.is-small.history-button[href=#]", {
+                            download: `${item.downloadBasename()}.csv`,
+                            onclick: e => {
+                                e.target.href = window.URL.createObjectURL(item.generateCsvAsBlob());
+                            }
+                        }, [m(UI.DownloadIcon), "CSV"]),
+                        m("a.button.is-info.is-small.history-button[href=#]", {
+                            download: `${item.downloadBasename()}.xml`,
+                            onclick: e => {
+                                e.target.href = window.URL.createObjectURL(item.generateXmlAsBlob());
+                            }
+                        }, [m(UI.DownloadIcon), "XML"]),
+                    ]);
+                }),
+            ]),
         ]);
     }
 };

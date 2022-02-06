@@ -198,6 +198,10 @@ class SondeData {
         return agh.sprintf("%02d:%02d", this.measuredAt.getHours(), this.measuredAt.getMinutes());
     }
 
+    getDateAsISOString() {
+        return this.measuredAt.toISOString();
+    }
+
     records() {
         return this._records;
     }
@@ -310,6 +314,94 @@ class SondeData {
                 };
             }),
         });
+    }
+
+    downloadBasename() {
+        // CSV/XMLで保存するときのファイル名
+        return agh.sprintf("windview-%04d%02d%02d%02d%02d%02d",
+            this.measuredAt.getFullYear(), this.measuredAt.getMonth()+1, this.measuredAt.getDate(),
+            this.measuredAt.getHours(), this.measuredAt.getMinutes(), this.measuredAt.getSeconds());
+    }
+
+    generateCsvAsBlob() {
+        const headerLines = [
+            `# WindView Export Measured Date=${this.getDate()}, ${this.locationLabel()}`,
+            `# lat=${this.lat}, lng=${this.lng}, groundLevel=${this.groundMSL}[m], mag_dec=${this.magDeclination}`,
+            "MSL(altitude)[m],AGL(height)[m],windheading (true/to)[°],windspeed[m/s],temperature [℃]"
+        ];
+        const lines = headerLines.concat(this.records().map(record => {
+            const fields = [
+                record.getAltitudeAsMeter(),
+                record.getHeightAsMeter(),
+                record.getWindHeading(),
+                record.getWindSpeedAsMerterPerSec(),
+                record.getTemperature(),
+            ];
+            return fields.join(",");
+        }));
+        const csvString = lines.join("\n");
+        const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+        const blob = new Blob([bom, csvString], {type: "text/csv"});
+        return blob;
+    }
+
+    generateXmlAsBlob() {
+        let doc = document.implementation.createDocument("", "", null);
+        let rootEle = doc.createElement("Windreading");
+        // Headers
+        let headerEle = doc.createElement("wRs");
+        let idEle = doc.createElement("Id");
+        idEle.appendChild(doc.createTextNode(this.getDateAsISOString()));
+        headerEle.appendChild(idEle);
+        let spdUnitsEle = doc.createElement("SpdUnits");
+        spdUnitsEle.appendChild(doc.createTextNode("M/s"));
+        headerEle.appendChild(spdUnitsEle);
+        let altUnitsEle = doc.createElement("AldUnits");
+        altUnitsEle.appendChild(doc.createTextNode("Meters"));
+        headerEle.appendChild(altUnitsEle);
+        let dirToFromEle = doc.createElement("DirToFrom");
+        dirToFromEle.appendChild(doc.createTextNode("To"));
+        headerEle.appendChild(dirToFromEle);
+        let dirMagTrueEle = doc.createElement("DirMagTrue")
+        dirMagTrueEle.appendChild(doc.createTextNode("True"));
+        headerEle.appendChild(dirMagTrueEle);
+        let aglAmslEle = doc.createElement("AglAmsl");
+        aglAmslEle.appendChild(doc.createTextNode("Agl"));
+        headerEle.appendChild(aglAmslEle);
+        let magVariationEle = doc.createElement("MagVariation");
+        magVariationEle.appendChild(doc.createTextNode(String(this.magDeclination)));
+        headerEle.appendChild(magVariationEle);
+        let elevationEle = doc.createElement("Elevation");
+        elevationEle.appendChild(doc.createTextNode(String(this.groundMSL)));
+        headerEle.appendChild(elevationEle);
+        let latEle = doc.createElement("lat");
+        latEle.appendChild(doc.createTextNode(String(this.lat)));
+        headerEle.appendChild(latEle);
+        let lngEle = doc.createElement("lng");
+        lngEle.appendChild(doc.createTextNode(String(this.lng)));
+        headerEle.appendChild(lngEle);
+        rootEle.appendChild(headerEle);
+        // records
+        this.records().forEach(record => {
+            let recordEle = doc.createElement("wR");
+            let altEle = doc.createElement("Alt");
+            altEle.appendChild(doc.createTextNode(String(record.getAltitudeAsMeter())));
+            recordEle.appendChild(altEle);
+            let spdEle = doc.createElement("Spd");
+            spdEle.appendChild(doc.createTextNode(String(record.getWindSpeedAsMerterPerSec())));
+            recordEle.appendChild(spdEle);
+            let dirEle = doc.createElement("Dir");
+            dirEle.appendChild(doc.createTextNode(String(record.getWindHeading())));
+            recordEle.appendChild(dirEle);
+            rootEle.appendChild(recordEle);
+        });
+        doc.appendChild(rootEle);
+
+        const serializer = new XMLSerializer();
+        const xmlString = serializer.serializeToString(doc);
+
+        const blob = new Blob([xmlString], {type: "text/xml"});
+        return blob;
     }
 }
 

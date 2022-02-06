@@ -451,6 +451,14 @@ $color10: gainsboro;
         .location-label {
             flex-grow: 10;
         }
+
+        .history-button {
+            margin-left: 1em;
+
+            i {
+                margin-right: 0.5em;
+            }
+        }
     }
 
     li:hover {
