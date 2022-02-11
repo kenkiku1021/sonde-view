@@ -198,6 +198,10 @@ class SondeData {
         return agh.sprintf("%02d:%02d", this.measuredAt.getHours(), this.measuredAt.getMinutes());
     }
 
+    getDateTime() {
+        return `${this.getDate()} ${this.measuredAt.toTimeString()}`;
+    }
+
     getDateAsISOString() {
         return this.measuredAt.toISOString();
     }
@@ -248,6 +252,18 @@ class SondeData {
         else {
             return this._records[this._records.length - 1];
         }
+    }
+
+    getGroundMSLAsMeter() {
+        let value = 0;
+        if(this.groundMSL > 0) {
+            value = this.groundMSL;
+        }
+        else if(this._records.length > 0) {
+            const record = this._records[0];
+            value = record.getAltitudeAsMeter() - record.getHeightAsMeter();
+        }
+        return value;
     }
 
     mapUrl() {
@@ -325,15 +341,15 @@ class SondeData {
 
     generateCsvAsBlob() {
         const headerLines = [
-            `# WindView Export Measured Date=${this.getDate()}, ${this.locationLabel()}`,
-            `# lat=${this.lat}, lng=${this.lng}, groundLevel=${this.groundMSL}[m], mag_dec=${this.magDeclination}`,
-            "MSL(altitude)[m],AGL(height)[m],windheading (true/to)[°],windspeed[m/s],temperature [℃]"
+            `# WindView Export Measured Date=${this.getDateTime()}, ${this.locationLabel()}`,
+            `# lat=${this.lat}, lng=${this.lng}, groundLevel=${this.getGroundMSLAsMeter()}[m], mag_dec=${this.magDeclination}`,
+            "MSL(altitude)[m],AGL(height)[m],windheading (true/from)[°],windspeed[m/s],temperature [℃]"
         ];
         const lines = headerLines.concat(this.records().map(record => {
             const fields = [
                 record.getAltitudeAsMeter(),
                 record.getHeightAsMeter(),
-                record.getWindHeading(),
+                record.getWindTrueFrom(),
                 record.getWindSpeedAsMerterPerSec(),
                 record.getTemperature(),
             ];
@@ -351,28 +367,28 @@ class SondeData {
         // Headers
         let headerEle = doc.createElement("wRs");
         let idEle = doc.createElement("Id");
-        idEle.appendChild(doc.createTextNode(this.getDateAsISOString()));
+        idEle.appendChild(doc.createTextNode(this.getDateTime()));
         headerEle.appendChild(idEle);
         let spdUnitsEle = doc.createElement("SpdUnits");
         spdUnitsEle.appendChild(doc.createTextNode("M/s"));
         headerEle.appendChild(spdUnitsEle);
-        let altUnitsEle = doc.createElement("AldUnits");
+        let altUnitsEle = doc.createElement("AltUnits");
         altUnitsEle.appendChild(doc.createTextNode("Meters"));
         headerEle.appendChild(altUnitsEle);
         let dirToFromEle = doc.createElement("DirToFrom");
-        dirToFromEle.appendChild(doc.createTextNode("To"));
+        dirToFromEle.appendChild(doc.createTextNode("From"));
         headerEle.appendChild(dirToFromEle);
         let dirMagTrueEle = doc.createElement("DirMagTrue")
         dirMagTrueEle.appendChild(doc.createTextNode("True"));
         headerEle.appendChild(dirMagTrueEle);
         let aglAmslEle = doc.createElement("AglAmsl");
-        aglAmslEle.appendChild(doc.createTextNode("Agl"));
+        aglAmslEle.appendChild(doc.createTextNode("AMSL"));
         headerEle.appendChild(aglAmslEle);
         let magVariationEle = doc.createElement("MagVariation");
         magVariationEle.appendChild(doc.createTextNode(String(this.magDeclination)));
         headerEle.appendChild(magVariationEle);
         let elevationEle = doc.createElement("Elevation");
-        elevationEle.appendChild(doc.createTextNode(String(this.groundMSL)));
+        elevationEle.appendChild(doc.createTextNode(String(this.getGroundMSLAsMeter())));
         headerEle.appendChild(elevationEle);
         let latEle = doc.createElement("lat");
         latEle.appendChild(doc.createTextNode(String(this.lat)));
@@ -391,7 +407,7 @@ class SondeData {
             spdEle.appendChild(doc.createTextNode(String(record.getWindSpeedAsMerterPerSec())));
             recordEle.appendChild(spdEle);
             let dirEle = doc.createElement("Dir");
-            dirEle.appendChild(doc.createTextNode(String(record.getWindHeading())));
+            dirEle.appendChild(doc.createTextNode(String(record.getWindTrueFrom())));
             recordEle.appendChild(dirEle);
             rootEle.appendChild(recordEle);
         });
