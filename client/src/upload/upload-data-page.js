@@ -5,6 +5,7 @@ import UI from "../ui";
 import { SondeData } from "../models/sonde_data";
 import { toLocalTimeISOString } from "../time-lib";
 import Locations from "./models/locations";
+import SystemSetting from "../models/system_setting";
 import agh from "agh.sprintf";
 
 function isNumber(s) {
@@ -13,15 +14,37 @@ function isNumber(s) {
 
 const UploadDataPage = {
   oninit: vnode => {
+    vnode.state.setting = new SystemSetting();
+    vnode.state.setting.getDefaultLocation();
     vnode.state.sondeData = new SondeData();
     vnode.state.presetLocations = new Locations();
     vnode.state.presetLocations.fetch();
-    vnode.state.selectedLocation = 0;
-    vnode.state.measuredAt = toLocalTimeISOString(vnode.state.sondeData.measuredAt);
     vnode.state.lat = vnode.state.sondeData.lat;
     vnode.state.lng = vnode.state.sondeData.lng;
     vnode.state.mag = vnode.state.sondeData.magDeclination;
-    vnode.state.msl = vnode.state.sondeData.groundMSL;
+    vnode.state.msl = vnode.state.sondeData.groundMSL;  
+    vnode.state.measuredAt = toLocalTimeISOString(vnode.state.sondeData.measuredAt);
+  },
+
+  onbeforeupdate(vnode) {
+    const location = vnode.state.presetLocations.get(vnode.state.setting.defaultLocation);
+    vnode.state.selectedLocation = location ? location.id : 0;
+    if(vnode.state.selectedLocation === 0) {
+      vnode.state.lat = vnode.state.sondeData.lat;
+      vnode.state.lng = vnode.state.sondeData.lng;
+      vnode.state.mag = vnode.state.sondeData.magDeclination;
+      vnode.state.msl = vnode.state.sondeData.groundMSL;  
+    } 
+    else {
+      vnode.state.sondeData.setLat(location.lat);
+      vnode.state.sondeData.setLng(location.lng);
+      vnode.state.sondeData.setGroundMSL(location.msl);
+      vnode.state.sondeData.setMagDeclination(location.mag);
+      vnode.state.lat = vnode.state.sondeData.lat;
+      vnode.state.lng = vnode.state.sondeData.lng;
+      vnode.state.mag = vnode.state.sondeData.magDeclination;
+      vnode.state.msl = vnode.state.sondeData.groundMSL;
+    }
   },
 
   view: vnode => {

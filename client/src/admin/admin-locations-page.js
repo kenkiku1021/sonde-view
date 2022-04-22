@@ -3,6 +3,7 @@ import AdminUI from "./admin-ui";
 import UI from "../ui";
 import i18next from 'i18next';
 import AdminLocations from "./models/admin-locations";
+import SystemSetting from "../models/system_setting";
 
 const NewLocationView = {
   oninit: vnode => {
@@ -130,6 +131,11 @@ const NewLocationView = {
 };
 
 const LocationsTableView = {
+  oninit: vnode => {
+    vnode.state.setting = new SystemSetting();
+    vnode.state.setting.getDefaultLocation();
+  },
+
   view: vnode => {
     return m("table.table", [
       m("thead", [
@@ -141,6 +147,8 @@ const LocationsTableView = {
           m("th", i18next.t("locationMag")),
           m("th", i18next.t("locationMsl")),
           m("th", i18next.t("locationDisabled")),
+          m("th", i18next.t("locationDefault")),
+          m("th", ""),
         ]),
       ]),
       m("tbody", [
@@ -195,6 +203,18 @@ const LocationsTableView = {
                   checked: loc.disabled,
                   onclick: e => {
                     loc.disabled = e.target.checked;
+                  },
+                }),
+              ]),
+            ]),
+            m("td.check", [
+              m("label.radio", [
+                m("input[type=radio][name=default_location]", {
+                  checked: loc.id === vnode.state.setting.defaultLocation,
+                  onclick: e => {
+                    if(e.target.checked && !loc.disabled) {
+                      vnode.state.setting.setDefaultLocation(loc.id);
+                    }
                   },
                 }),
               ]),
