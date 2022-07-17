@@ -7,6 +7,7 @@ import { toLocalTimeISOString } from "../time-lib";
 import Locations from "./models/locations";
 import SystemSetting from "../models/system_setting";
 import agh from "agh.sprintf";
+import UploadSetting from "./models/upload-setting";
 
 function isNumber(s) {
   return s.match(/^\-?\d+\.?\d*$/);
@@ -24,6 +25,8 @@ const UploadDataPage = {
     vnode.state.mag = vnode.state.sondeData.magDeclination;
     vnode.state.msl = vnode.state.sondeData.groundMSL;  
     vnode.state.measuredAt = toLocalTimeISOString(vnode.state.sondeData.measuredAt);
+    vnode.state.uploadSetting = new UploadSetting();
+    vnode.state.uploadSetting.load();
   },
 
   onbeforeupdate(vnode) {
@@ -150,6 +153,7 @@ const UploadDataPage = {
               }),
             ]),
           ]),
+          m(UploadSettingView, {setting: vnode.state.uploadSetting}),
           m(".columns", [
             m(".column", [
               m(UploadUI.TextArea, {
@@ -185,6 +189,70 @@ const UploadDataPage = {
   },
 };
 
+const UploadSettingView = {
+  view: vnode => {
+    return [
+      m(".columns", [
+        m(".column.is-narrow", [
+          m(UploadUI.Select, {
+            id: "altitude_type",
+            label: i18next.t("uploadDataSettingAltitudeType"),
+            value: vnode.attrs.setting.altitudeType,
+            values: vnode.attrs.setting.altitudeTypes().map(val => [val, val]),
+            onchange: e => {
+              vnode.attrs.setting.setAltitudeType(e.target.value);
+            },
+          }),
+        ]),
+        m(".column.is-narrow", [
+          m(UploadUI.Select, {
+            id: "altitude_unit",
+            label: i18next.t("uploadDataSettingAltitudeUnit"),
+            value: vnode.attrs.setting.altitudeUnit,
+            values: vnode.attrs.setting.altitudeUnits().map(val => [val, val]),
+            onchange: e => {
+              vnode.attrs.setting.setAltitudeUnit(e.target.value);
+            },
+          }),
+        ]),
+        m(".column.is-narrow", [
+          m(UploadUI.Select, {
+            id: "winddirection_type",
+            label: i18next.t("uploadDataSettingWindDirectionType"),
+            value: vnode.attrs.setting.windDirectionType,
+            values: vnode.attrs.setting.windDirectionTypes().map(val => [val, val]),
+            onchange: e => {
+              vnode.attrs.setting.setWindDirectionType(e.target.value);
+            },
+          }),
+        ]),
+        m(".column.is-narrow", [
+          m(UploadUI.Select, {
+            id: "true_mag",
+            label: i18next.t("uploadDataSettingWindDirectionDegType"),
+            value: vnode.attrs.setting.degreeType,
+            values: vnode.attrs.setting.degreeTypes().map(val => [val, val]),
+            onchange: e => {
+              vnode.attrs.setting.setDegreeType(e.target.value);
+            },
+          }),
+        ]),
+        m(".column.is-narrow", [
+          m(UploadUI.Select, {
+            id: "windspeed_unit",
+            label: i18next.t("uploadDataSettingWindSpeedUnit"),
+            value: vnode.attrs.setting.windspeedUnit,
+            values: vnode.attrs.setting.windspeedUnits().map(val => [val, val]),
+            onchange: e => {
+              vnode.attrs.setting.setWindspeedUnit(e.target.value);
+            },
+          }),
+        ]),
+      ]),
+    ];
+  }
+};
+
 const UploadPreviewView = {
   view: vnode => {
     return m(".preview", [
@@ -197,6 +265,7 @@ const UploadPreviewView = {
             m("th", [i18next.t("tblWindDirectionFrom"), "(", i18next.t("tblMagDeclinationTrue"), ")"]),
             m("th", [i18next.t("tblWindSpeed"), "[kt]"]),
             m("th", [i18next.t("tblWindSpeed"), "[m/s]"]),
+            m("th", [i18next.t("tblWindSpeed"), "[km/h]"])
           ]),
         ]),
         m("tbody", [
@@ -208,6 +277,7 @@ const UploadPreviewView = {
               m("td", agh.sprintf("%.1f", data.getWindTrueFrom())),
               m("td", agh.sprintf("%.1f", data.getWindSpeedAsKt())),
               m("td", agh.sprintf("%.1f", data.getWindSpeedAsMerterPerSec())),
+              m("td", agh.sprintf("%.1f", data.getWindSpeedAsKmPerHour())),
             ]);
           }),
         ]),

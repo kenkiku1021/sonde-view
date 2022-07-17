@@ -21,6 +21,13 @@ const i18nResources = {
       tblMagDeclinationTrue: "True",
       dataUpdateError: "データの更新に失敗しました。",
       dataUpdateSuccessed: "データを更新しました。",
+      uploadDataSetting: "データ設定",
+      uploadDataSettingAltitudeType: "高度",
+      uploadDataSettingAltitudeUnit: "高度単位",
+      uploadDataSettingWindDirectionType: "風向",
+      uploadDataSettingWindDirectionDegType: "True/Mag",
+      uploadDataSettingWindSpeedUnit: "風速単位",
+      uploadDataSettingUseUnitInData: "データの単位を使用する",
     }
   },
 
@@ -46,6 +53,13 @@ const i18nResources = {
       tblMagDeclinationTrue: "True",
       dataUpdateError: "Cannot update data",
       dataUpdateSuccessed: "Data updated",
+      uploadDataSetting: "Data setting",
+      uploadDataSettingAltitudeType: "Altitude",
+      uploadDataSettingAltitudeUnit: "Alt Unit",
+      uploadDataSettingWindDirectionType: "Wind direction",
+      uploadDataSettingWindDirectionDegType: "True/Mag",
+      uploadDataSettingWindSpeedUnit: "Speed unit",
+      uploadDataSettingUseUnitInData: "Use unit in data",
     }
   }
 };

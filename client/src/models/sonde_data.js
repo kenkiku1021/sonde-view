@@ -6,6 +6,7 @@ import agh from "agh.sprintf";
 import { db } from "../firebase-app";
 import { doc, setDoc} from "firebase/firestore";
 import i18next from "i18next";
+import UploadSetting from "../upload/models/upload-setting";
 
 const SONDE_DATA_COLLECTION = "sondeview";
 class SondeDataItem {
@@ -160,6 +161,7 @@ class SondeData {
         }
         catch(err) {
         }
+
     }
 
     setLat(value) {
@@ -290,21 +292,38 @@ class SondeData {
         if(!txt) {
             return;
         }
+        const uploadSetting = new UploadSetting();
+        uploadSetting.load();
         const lines = txt.split("\n");
         this._records = [];
         for(let line of lines) {
-            if(line.match(/^([\d\.]+)m\s+([\d+\.]+)°\s+([\d\.]+)kt/)) {
-                const agl = Number(RegExp.$1);
-                let windHeading = Number(RegExp.$2) - 180;
+            const m = line.match(/^([\d\.]+)(m|ft)?\s+([\d+\.]+)(°)?\s+([\d\.]+)(kt|m\/s|km\/h)?/);
+            if(m) {
+                const altitudeUnit = m[2] ? m[2] : uploadSetting.altitudeUnit;
+                const windspeedUnit = m[6] ? m[6] : uploadSetting.windspeedUnit;
+                let altitude = uploadSetting.altitudeType === "AGL" ? Number(m[1]) + this.groundMSL : Number(m[1]);
+                if(altitudeUnit === "ft") {
+                    altitude = Unit.conv_ft_to_m(altitude);
+                }
+                let windHeading = uploadSetting.windDirectionType === "To" ? Number(m[3]) : Number(m[3]) - 180;
                 if(windHeading < 0) {
                     windHeading += 360;
                 }
-                const windSpeed = Unit.conv_kt_to_m_s(Number(RegExp.$3));
+                if(uploadSetting.degreeType === "Mag") {
+                    windHeading += this.magDeclination;
+                }
+                let windspeed = Number(m[5]);
+                if(windspeedUnit === "kt") {
+                    windspeed = Unit.conv_kt_to_m_s(windspeed);
+                }
+                else if(windspeedUnit === "km/h") {
+                    windspeed = Unit.conv_km_h_to_m_s(windspeed);
+                }
                 const data = {
-                    altitude: this.groundMSL + agl,
-                    height: agl,
+                    altitude: altitude,
+                    height: altitude - this.groundMSL,
                     windheading: windHeading,
-                    windspeed: windSpeed,
+                    windspeed: windspeed,
                 };
                 this._records.push(new SondeDataItem(data, this.magDeclination));
             }
