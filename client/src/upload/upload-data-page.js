@@ -30,9 +30,13 @@ const UploadDataPage = {
   },
 
   onbeforeupdate(vnode) {
-    const location = vnode.state.presetLocations.get(vnode.state.setting.defaultLocation);
-    vnode.state.selectedLocation = location ? location.id : 0;
-    if(vnode.state.selectedLocation === 0) {
+    if(!vnode.state.selectedLocation || (vnode.state.selectedLocation === "0" && !vnode.state.lat && !vnode.state.lng)) {
+      // 観測地点が未選択 → デフォルト観測地点を選択
+      const defaultLocation = vnode.state.presetLocations.get(vnode.state.setting.defaultLocation);
+      vnode.state.selectedLocation = defaultLocation ? defaultLocation.id : "0";
+    }
+    const location = vnode.state.presetLocations.get(vnode.state.selectedLocation);
+    if(vnode.state.selectedLocation === "0") {
       vnode.state.lat = vnode.state.sondeData.lat;
       vnode.state.lng = vnode.state.sondeData.lng;
       vnode.state.mag = vnode.state.sondeData.magDeclination;
@@ -76,9 +80,10 @@ const UploadDataPage = {
                 type: "text",
                 value: vnode.state.lat,
                 oninput: e => {
-                  vnode.state.lat = e.target.value;
-                  if(isNumber(vnode.state.lat)) {
-                    sondeData.setLat(vnode.state.lat);
+                  if(isNumber(e.target.value)) {
+                    const value = Number(e.target.value);
+                    sondeData.setLat(value);
+                    vnode.state.lat = value;
                   }
                 }
               }),
@@ -90,9 +95,10 @@ const UploadDataPage = {
                 type: "text",
                 value: vnode.state.lng,
                 oninput: e => {
-                  vnode.state.lng = e.target.value;
-                  if(isNumber(vnode.state.lng)) {
-                    sondeData.setLng(vnode.state.lng);
+                  if(isNumber(e.target.value)) {
+                    const value = Number(e.target.value);
+                    sondeData.setLng(value);
+                    vnode.state.lng = value;
                   }
                 }
               }),
@@ -104,9 +110,10 @@ const UploadDataPage = {
                 type: "text",
                 value: vnode.state.mag,
                 oninput: e => {
-                  vnode.state.mag = e.target.value;
-                  if(isNumber(vnode.state.mag)) {
-                    sondeData.setMagDeclination(vnode.state.mag);
+                  if(isNumber(e.target.value)) {
+                    const value = Number(e.target.value);
+                    sondeData.setMagDeclination(value);
+                    vnode.state.mag = value;
                     sondeData.parseDataText(vnode.state.measuredData);
                   }
                 }
@@ -119,9 +126,10 @@ const UploadDataPage = {
                 type: "text",
                 value: vnode.state.msl,
                 oninput: e => {
-                  vnode.state.msl = e.target.value;
-                  if(isNumber(vnode.state.msl)) {
-                    sondeData.setGroundMSL(vnode.state.msl);
+                  if(isNumber(e.target.value)) {
+                    const value = Number(e.target.value);
+                    sondeData.setGroundMSL(value);
+                    vnode.state.msl = value;
                     sondeData.parseDataText(vnode.state.measuredData);
                   }
                 }
@@ -147,7 +155,7 @@ const UploadDataPage = {
                     vnode.state.lng = vnode.state.sondeData.lng;
                     vnode.state.mag = vnode.state.sondeData.magDeclination;
                     vnode.state.msl = vnode.state.sondeData.groundMSL;      
-                    sondeData.parseDataText(vnode.state.measuredData);          
+                    sondeData.parseDataText(vnode.state.measuredData);
                   }
                 },
               }),

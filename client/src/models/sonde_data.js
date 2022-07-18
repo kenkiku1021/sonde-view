@@ -19,8 +19,8 @@ class SondeDataItem {
     */
 
     constructor(value, magDeclination = 0) {
-        this.altitude = value.altitude ? value.altitude : null;
-        this.height = value.height ? value.height : null;
+        this.altitude = value.altitude ? Math.round(value.altitude) : null;
+        this.height = value.height ? Math.round(value.height) : null;
         this.temperature = value.temperature ? value.temperature : null;
         this.windHeading = value.windheading ? value.windheading : null;
         this.windSpeed = value.windspeed ? value.windspeed : null;
