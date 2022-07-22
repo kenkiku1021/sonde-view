@@ -7,7 +7,7 @@ import HistoryPage from "./history-page";
 import SetupPage from "./setup-page";
 import DownloadPage from "./download-page";
 import { auth } from "./firebase-app";
-import { onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from "firebase/auth";
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { i18nResources } from "./resources";
@@ -25,7 +25,7 @@ signinWithEmailButton.addEventListener("click", signinWithEmail);
 
 function signinWithGoogle() {
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
+    signInWithRedirect(auth, provider)
         .then((result) => {
             // This gives you a Google Access Token. You can use it to access the Google API.
             const credential = GoogleAuthProvider.credentialFromResult(result);
