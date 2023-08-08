@@ -16,11 +16,11 @@ const TABLE_BACKGROUND_COLOR_BY_DIRECTION = 2;
 class SettingData {
     constructor() {
         this.mslAsMeter = false,
-        this.mslAsFt = true,
+        this.mslAsFt = false,
         this.aglAsMeter = true,
         this.aglAsFt = false,
         this.windSpeedAsMeterPerSec = true;
-        this.windSpeedAsKmPerHour = true;
+        this.windSpeedAsKmPerHour = false;
         this.windSpeedAsKt = false;
         this.windDirection = Direction.DirectionEnum.TO;
         this.magDeclination = Direction.MagDeclinationEnum.MAG;
