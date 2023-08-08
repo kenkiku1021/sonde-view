@@ -234,6 +234,7 @@ def load_data(data)
       if !val[:height].is_a?(Numeric)
         errors << "record #{i} has invalid height value: #{val[:height]}"
       end
+      val[:windheading] = (val[:windheading] + data[:mag_dec]) % 360 # windheadingの値は「to/mag」として扱う
       if !val[:windheading].is_a?(Numeric) || val[:windheading] < 0 || val[:windheading] >= 360
         errors << "record #{i} has invalid windheading value: #{val[:windheading]}"
       end
