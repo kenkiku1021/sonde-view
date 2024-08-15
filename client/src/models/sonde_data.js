@@ -328,6 +328,7 @@ class SondeData {
                 this._records.push(new SondeDataItem(data, this.magDeclination));
             }
         }
+        this._records.sort((a, b) => a.altitude - b.altitude);
     }
 
     async update() {
