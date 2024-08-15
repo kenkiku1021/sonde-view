@@ -19,7 +19,7 @@
     "babel-loader": "^8.2.2",
     "bulma": "^0.9.3",
     "css-loader": "^5.2.7",
-    "firebase": "^9.6.11",
+    "firebase": "^9.23.0",
     "firebaseui": "^4.8.1",
     "i18next": "^20.1.0",
     "i18next-browser-languagedetector": "^6.1.0",
